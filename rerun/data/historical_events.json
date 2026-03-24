@@ -1,0 +1,280 @@
+{
+  "2015": {
+    "btc_price": { "start": 1800, "end": 2900, "high": 3200, "low": 1200 },
+    "property_price_per_sqm": {
+      "beijing": 35000, "shanghai": 32000, "shenzhen": 30000,
+      "hangzhou": 18000, "average_tier2": 10000
+    },
+    "events": [
+      {
+        "month": 6,
+        "title": "A股股灾",
+        "description": "上证指数从5178点暴跌至2850点，数千只股票跌停，一片哀嚎。",
+        "impact": "股市投资者巨亏，但与BTC无关"
+      },
+      {
+        "month": 8,
+        "title": "811汇改",
+        "description": "人民币一次性贬值近2%，市场恐慌情绪蔓延。",
+        "impact": "部分资金开始寻找美元计价资产"
+      }
+    ],
+    "background": "BTC在底部徘徊，大多数人还不知道它是什么。A股经历了疯牛和股灾。房价开始蠢蠢欲动。"
+  },
+  "2016": {
+    "btc_price": { "start": 2800, "end": 6800, "high": 7200, "low": 2500 },
+    "property_price_per_sqm": {
+      "beijing": 45000, "shanghai": 43000, "shenzhen": 48000,
+      "hangzhou": 22000, "average_tier2": 12000
+    },
+    "events": [
+      {
+        "month": 2,
+        "title": "一线城市房价暴涨",
+        "description": "深圳房价一年涨了60%，上海、北京紧随其后，「恐慌性购房」席卷全国。",
+        "impact": "不买房就永远买不起的焦虑弥漫"
+      },
+      {
+        "month": 7,
+        "title": "BTC产量减半",
+        "description": "比特币完成第二次减半，区块奖励从25降至12.5个BTC。",
+        "impact": "供给减少，为下一轮牛市埋下伏笔"
+      }
+    ],
+    "background": "BTC缓慢爬升，知道的人依然不多。房价彻底起飞，全民抢房。买房还是买币？这是个问题。"
+  },
+  "2017": {
+    "btc_price": { "start": 7000, "end": 130000, "high": 140000, "low": 6500 },
+    "property_price_per_sqm": {
+      "beijing": 55000, "shanghai": 50000, "shenzhen": 55000,
+      "hangzhou": 28000, "average_tier2": 14000
+    },
+    "events": [
+      {
+        "month": 6,
+        "title": "ICO疯狂",
+        "description": "各种区块链项目融资动辄数亿，白皮书写得天花乱坠，空气币满天飞。",
+        "impact": "暴富神话遍地，FOMO情绪爆棚"
+      },
+      {
+        "month": 9,
+        "title": "九四禁令",
+        "description": "中国政府全面禁止ICO，关闭境内交易所。BTC一度暴跌40%，随后V型反弹。",
+        "impact": "短期暴跌引发恐慌，但BTC年底创下历史新高"
+      },
+      {
+        "month": 12,
+        "title": "BTC冲上10万",
+        "description": "比特币突破10万人民币，全民讨论区块链，你妈都在问你什么是比特币。",
+        "impact": "贪婪情绪到达顶点"
+      }
+    ],
+    "background": "BTC疯牛年。年初7000，年底13万。ICO狂潮让无数人一夜暴富，也让无数人血本无归。全世界都在问：比特币到底是什么？"
+  },
+  "2018": {
+    "btc_price": { "start": 130000, "end": 25000, "high": 130000, "low": 20000 },
+    "property_price_per_sqm": {
+      "beijing": 58000, "shanghai": 52000, "shenzhen": 56000,
+      "hangzhou": 30000, "average_tier2": 15000
+    },
+    "events": [
+      {
+        "month": 1,
+        "title": "BTC崩盘开始",
+        "description": "比特币从高点一路下跌，到年底跌去超过80%。",
+        "impact": "币圈寒冬，大量项目归零，交易所跑路"
+      },
+      {
+        "month": 7,
+        "title": "P2P暴雷潮",
+        "description": "数百家P2P平台集中爆雷，数万投资者血本无归。",
+        "impact": "金融风险集中爆发，不少人被骗"
+      },
+      {
+        "month": 11,
+        "title": "中美贸易战升温",
+        "description": "美国对中国商品加征关税，全球市场动荡。",
+        "impact": "经济不确定性增加，就业市场开始收紧"
+      }
+    ],
+    "background": "【Boss关】加密寒冬。BTC跌了80%，无数人割肉离场。P2P暴雷，股市低迷。这一年考验的是信仰。"
+  },
+  "2019": {
+    "btc_price": { "start": 25000, "end": 50000, "high": 95000, "low": 24000 },
+    "property_price_per_sqm": {
+      "beijing": 57000, "shanghai": 52000, "shenzhen": 55000,
+      "hangzhou": 30000, "average_tier2": 15000
+    },
+    "events": [
+      {
+        "month": 4,
+        "title": "996.ICU",
+        "description": "程序员在GitHub发起996.ICU项目，抗议互联网公司强制加班文化，引发全网热议。",
+        "impact": "互联网工作者开始反思工作与生活的平衡"
+      },
+      {
+        "month": 6,
+        "title": "BTC反弹至9.5万",
+        "description": "比特币从年初低点快速反弹，一度接近10万。",
+        "impact": "市场情绪回暖，但多数人已经下车"
+      }
+    ],
+    "background": "BTC从底部回暖，但很多人已经在2018年割肉走了。经济增速放缓，互联网行业开始告别野蛮生长。"
+  },
+  "2020": {
+    "btc_price": { "start": 50000, "end": 190000, "high": 200000, "low": 35000 },
+    "property_price_per_sqm": {
+      "beijing": 58000, "shanghai": 55000, "shenzhen": 60000,
+      "hangzhou": 32000, "average_tier2": 16000
+    },
+    "events": [
+      {
+        "month": 1,
+        "title": "新冠疫情爆发",
+        "description": "武汉封城，全国进入紧急状态。口罩脱销，春节变成了居家隔离。",
+        "impact": "全球经济停摆，线下行业重创"
+      },
+      {
+        "month": 3,
+        "title": "全球金融市场暴跌",
+        "description": "美股一周内熔断四次，全球资产被无差别抛售，BTC一天跌了50%。",
+        "impact": "恐慌到极点，但也是最佳抄底时机"
+      },
+      {
+        "month": 5,
+        "title": "BTC第三次减半",
+        "description": "比特币完成第三次产量减半，区块奖励降至6.25个BTC。",
+        "impact": "减半效应开始发酵，下半年币价持续走高"
+      }
+    ],
+    "background": "【Boss关】COVID改变了一切。全球停摆，远程办公兴起。BTC年初暴跌50%后强势反弹，年底接近20万。你知道这一切会发生，但身处其中依然心跳加速。"
+  },
+  "2021": {
+    "btc_price": { "start": 200000, "end": 310000, "high": 440000, "low": 190000 },
+    "property_price_per_sqm": {
+      "beijing": 62000, "shanghai": 60000, "shenzhen": 72000,
+      "hangzhou": 35000, "average_tier2": 18000
+    },
+    "events": [
+      {
+        "month": 4,
+        "title": "BTC创历史新高",
+        "description": "比特币突破44万人民币，特斯拉宣布购入15亿美元BTC。全民FOMO。",
+        "impact": "机构入场，加密货币进入主流视野"
+      },
+      {
+        "month": 5,
+        "title": "中国全面禁止挖矿",
+        "description": "国务院金融委明确打击比特币挖矿和交易行为，矿场大迁移。",
+        "impact": "BTC短期暴跌，但全球算力迅速转移"
+      },
+      {
+        "month": 12,
+        "title": "全民基金热",
+        "description": "坤坤、兰兰成为偶像级基金经理，年轻人疯狂买基金。",
+        "impact": "基金被追捧到高位，注定成为2022年的眼泪"
+      }
+    ],
+    "background": "BTC的第二次疯牛。44万的高点让人眩晕。全民基金热、Meme币、NFT……每个人都觉得自己是投资天才。你知道泡沫快破了。"
+  },
+  "2022": {
+    "btc_price": { "start": 300000, "end": 120000, "high": 310000, "low": 110000 },
+    "property_price_per_sqm": {
+      "beijing": 60000, "shanghai": 58000, "shenzhen": 65000,
+      "hangzhou": 33000, "average_tier2": 17000
+    },
+    "events": [
+      {
+        "month": 5,
+        "title": "Luna/UST崩盘",
+        "description": "算法稳定币UST脱锚，Luna从80美元跌到归零，400亿美元市值蒸发。",
+        "impact": "加密市场信心崩塌"
+      },
+      {
+        "month": 7,
+        "title": "大厂裁员潮",
+        "description": "阿里、腾讯、字节、美团纷纷大规模裁员，互联网寒冬正式到来。",
+        "impact": "高薪码农也不安全了，就业焦虑蔓延"
+      },
+      {
+        "month": 11,
+        "title": "FTX交易所暴雷",
+        "description": "全球第二大加密交易所FTX一夜崩塌，创始人SBF被捕。BTC跌至年内最低。",
+        "impact": "行业信誉危机，大量用户资产被冻结"
+      }
+    ],
+    "background": "【Boss关】三重暴击。BTC腰斩、大厂裁员潮、FTX崩盘。基金亏损、房价开始松动。这一年，活着就是胜利。"
+  },
+  "2023": {
+    "btc_price": { "start": 120000, "end": 300000, "high": 310000, "low": 115000 },
+    "property_price_per_sqm": {
+      "beijing": 58000, "shanghai": 56000, "shenzhen": 58000,
+      "hangzhou": 30000, "average_tier2": 16000
+    },
+    "events": [
+      {
+        "month": 1,
+        "title": "ChatGPT席卷全球",
+        "description": "OpenAI的ChatGPT用户突破1亿，AI成为最热门的赛道。",
+        "impact": "新一轮技术革命开启，AI创业潮兴起"
+      },
+      {
+        "month": 6,
+        "title": "AI创业潮",
+        "description": "大模型公司遍地开花，AI应用层创业如火如荼。",
+        "impact": "新的造富机会出现，但泡沫也在积累"
+      },
+      {
+        "month": 12,
+        "title": "BTC ETF预期升温",
+        "description": "市场预期美国将批准比特币现货ETF，BTC年底回到30万。",
+        "impact": "加密市场从底部强势反弹"
+      }
+    ],
+    "background": "ChatGPT改变了世界。AI成为新的淘金赛道，BTC从底部强势反弹。你知道AI会火，但你没想到它来得这么快。新机会摆在面前。"
+  },
+  "2024": {
+    "btc_price": { "start": 300000, "end": 680000, "high": 720000, "low": 280000 },
+    "property_price_per_sqm": {
+      "beijing": 56000, "shanghai": 54000, "shenzhen": 55000,
+      "hangzhou": 28000, "average_tier2": 15000
+    },
+    "events": [
+      {
+        "month": 1,
+        "title": "比特币现货ETF获批",
+        "description": "美国SEC正式批准比特币现货ETF，华尔街资金涌入。",
+        "impact": "BTC进入机构化时代，价格一路走高"
+      },
+      {
+        "month": 4,
+        "title": "BTC第四次减半",
+        "description": "比特币完成第四次产量减半，区块奖励降至3.125个BTC。",
+        "impact": "供需关系再次收紧"
+      },
+      {
+        "month": 11,
+        "title": "BTC突破70万",
+        "description": "受ETF资金流入和减半效应推动，BTC创下历史新高。",
+        "impact": "终局前的狂欢"
+      }
+    ],
+    "background": "BTC ETF改变了游戏规则，华尔街的钱涌进来了。第四次减半后价格一路飙升。终局临近，你的十年之旅即将画上句号。"
+  },
+  "2025": {
+    "btc_price": { "start": 680000, "end": 700000, "high": 750000, "low": 500000 },
+    "property_price_per_sqm": {
+      "beijing": 55000, "shanghai": 53000, "shenzhen": 53000,
+      "hangzhou": 27000, "average_tier2": 14500
+    },
+    "events": [
+      {
+        "month": 3,
+        "title": "AI Agent元年",
+        "description": "AI Agent从概念走向产品化，自动化工作流开始替代部分白领岗位。",
+        "impact": "又一波行业洗牌"
+      }
+    ],
+    "background": "终局之年。BTC维持在70万高位，AI Agent改变着工作方式。你的十年穿越之旅到此结束。是时候结算了。"
+  }
+}

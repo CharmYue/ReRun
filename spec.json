@@ -1,0 +1,507 @@
+{
+  "project": "ReRun — 人生 Roguelike 游戏",
+  "description": "玩家以重生者身份穿越回2015年，带着10年记忆，在真实历史事件中做选择，试图逆天改命",
+  "tech_stack": "Python 3.12+ | rich CLI | FastAPI (Web) | OpenAI gpt-4o-mini | Pydantic | asyncio",
+  "updated_at": "2026-03-24",
+
+  "modules": {
+    "M01_project_init": {
+      "name": "项目初始化与基础设施",
+      "features": [
+        {
+          "id": "F001",
+          "name": "pyproject.toml 项目配置",
+          "behavior": "运行 `pip install -e .` 或 `uv pip install -e .` 后，rerun 包可被正确安装；运行 `python -m rerun` 能触发入口函数",
+          "done": true
+        },
+        {
+          "id": "F002",
+          "name": ".env.example 环境变量模板",
+          "behavior": "文件包含 OPENAI_API_KEY、OPENAI_MODEL、GAME_LANGUAGE 等字段及注释说明；复制为 .env 并填入真实 key 后程序可正常读取",
+          "done": true
+        },
+        {
+          "id": "F003",
+          "name": ".gitignore 配置",
+          "behavior": "包含 .env、__pycache__、*.pyc、.venv、saves/、dist/ 等条目，确保敏感文件和临时文件不被提交",
+          "done": true
+        },
+        {
+          "id": "F004",
+          "name": "config.py 配置管理",
+          "behavior": "使用 pydantic-settings 从 .env 加载配置；缺少 OPENAI_API_KEY 时游戏仍可以离线模式启动（fallback 事件池）；支持 GAME_LANGUAGE、LLM_PROVIDER、LLM_MODEL、TEMPERATURE 等配置项",
+          "done": true
+        },
+        {
+          "id": "F005",
+          "name": "__main__.py 入口",
+          "behavior": "执行 `python -m rerun` 启动游戏主循环；支持 `--offline` 参数强制离线模式；支持 `--lang en/cn` 切换语言",
+          "done": true
+        }
+      ]
+    },
+
+    "M02_game_state": {
+      "name": "游戏状态系统",
+      "features": [
+        {
+          "id": "F010",
+          "name": "PlayerState 数据模型",
+          "behavior": "Pydantic BaseModel，包含 year(2015)、savings(80000)、btc_amount(0)、properties(0)、stocks(0)、stress(20)、relationship(50)、social(50)、reputation(30)、has_partner(false)、is_employed(true)、job_title、monthly_salary(8000)、monthly_expense(5000) 等字段，所有字段有类型标注和默认值",
+          "done": true
+        },
+        {
+          "id": "F011",
+          "name": "PlayerState 选择与成就记录",
+          "behavior": "PlayerState 包含 choices_log(list[dict])、achievements(list[str])、max_btc_held(float)、times_sold_btc(int)、times_helped_family(int)、breakups(int) 等记录字段，用于成就判定和结算回顾",
+          "done": true
+        },
+        {
+          "id": "F012",
+          "name": "净资产计算 net_worth",
+          "behavior": "PlayerState.net_worth 属性根据当年 BTC 价格、房产价格实时计算 savings + btc_value + property_value + stocks 的总和；价格数据从 historical_events.json 中读取",
+          "done": true
+        },
+        {
+          "id": "F013",
+          "name": "状态不可变 — 每次变更生成新实例",
+          "behavior": "每次选择导致的状态变更都返回一个新的 PlayerState 对象，旧状态保留在历史列表中，支持后续回溯查看",
+          "done": true
+        },
+        {
+          "id": "F014",
+          "name": "起始存款选择",
+          "behavior": "游戏开场时玩家从三档起始存款中选择：¥30,000（刚毕业）/ ¥80,000（有积蓄）/ ¥200,000（有房贷），不同档位对应不同的 monthly_salary、monthly_expense、job_title 初始值",
+          "done": true
+        }
+      ]
+    },
+
+    "M03_data_files": {
+      "name": "历史数据与事件模板",
+      "features": [
+        {
+          "id": "F020",
+          "name": "historical_events.json — 10年历史数据",
+          "behavior": "JSON 文件包含 2015-2025 每年的 btc_price(start/end/high/low)、property_price_per_sqm(多城市)、events(月份+标题+描述+影响)、background(年度背景文案)；数据基于真实历史",
+          "done": true
+        },
+        {
+          "id": "F021",
+          "name": "life_events.json — Fallback 事件池",
+          "behavior": "按 family/romance/career/social/accident 五类分类的事件模板；每个模板包含 template_id、title、description_template、variables(可替换变量列表)、choices(含 consequences)；无 API 时随机抽取拼装为完整事件",
+          "done": true
+        },
+        {
+          "id": "F022",
+          "name": "achievements.json — 成就定义",
+          "behavior": "包含投资类(钻石手/小丑/地主/十倍先生/纸手/精准抄底)、生活类(人生赢家/渣男渣女/佛系/意难平/孝子/独狼)、隐藏类(先知/故事大王/破产重生/穿越者暴露) 共16+个成就；每个成就包含 id、emoji、name、description、condition(判定逻辑描述)",
+          "done": true
+        },
+        {
+          "id": "F023",
+          "name": "narrator_lines.json — 旁白文案库",
+          "behavior": "按 situation 分类的固定旁白文案(开场/买入BTC/暴涨反应/暴跌反应/家人事件/感情事件/年度结算等)；中英双语；作为 LLM 不可用时的 fallback 和 few-shot 参考",
+          "done": true
+        }
+      ]
+    },
+
+    "M04_event_system": {
+      "name": "事件系统",
+      "features": [
+        {
+          "id": "F030",
+          "name": "GameEvent 数据模型",
+          "behavior": "Pydantic 模型，包含 year(int)、type(historical/life)、category(family/romance/career/social/accident/market)、title(str)、description(str，含旁白)、choices(list[Choice])；Choice 包含 key(A/B/C)、text、hint(旁白吐槽)、consequences(dict)、narrative(选后叙事)",
+          "done": true
+        },
+        {
+          "id": "F031",
+          "name": "历史事件加载",
+          "behavior": "从 historical_events.json 加载指定年份的历史事件和背景数据；作为每年年初的背景展示和 AI 生成事件的上下文输入",
+          "done": true
+        },
+        {
+          "id": "F032",
+          "name": "AI 生成生活事件",
+          "behavior": "调用 LLM，输入当前年份+历史背景+玩家全部数值+最近3个选择+排除的事件类型，输出严格 JSON 格式的 GameEvent；事件与玩家当前状态紧密相关；选项有真实 trade-off 无明显最优解；包含毒舌旁白",
+          "done": true
+        },
+        {
+          "id": "F033",
+          "name": "事件生成 Fallback",
+          "behavior": "LLM 调用超时或失败时，自动从 life_events.json 事件池中按当前状态随机选取模板并填充变量生成事件，确保游戏不中断",
+          "done": true
+        },
+        {
+          "id": "F034",
+          "name": "事件类型去重",
+          "behavior": "记录最近触发的事件类型，生成新事件时排除最近已出现的类型(exclude_types)，避免连续出现同类事件(如不会连续两年家人生病)",
+          "done": true
+        },
+        {
+          "id": "F035",
+          "name": "每年事件数量控制",
+          "behavior": "每年触发 1-2 个事件：必定有一个事件(历史事件或AI生活事件)，部分年份(Boss年: 2018/2020/2022)额外触发第二个事件",
+          "done": true
+        }
+      ]
+    },
+
+    "M05_choice_system": {
+      "name": "选择与后果系统",
+      "features": [
+        {
+          "id": "F040",
+          "name": "选项展示与输入",
+          "behavior": "每个事件展示 2-3 个选项(A/B/C)，每个选项含描述文本和系统提示(hint)；玩家输入字母选择；非法输入时提示重选",
+          "done": true
+        },
+        {
+          "id": "F041",
+          "name": "后果计算 — 数值变更",
+          "behavior": "选择后根据 consequences dict 更新 PlayerState 数值(savings/btc_amount/stress/relationship/social/reputation等)；数值变更为确定性规则引擎计算，非 LLM 生成",
+          "done": true
+        },
+        {
+          "id": "F042",
+          "name": "后果反馈展示",
+          "behavior": "选择后展示：叙事文本(narrative) → 数值变化面板(涨绿跌红) → 系统旁白吐槽；数值变化用 +/- 标注差值",
+          "done": true
+        },
+        {
+          "id": "F043",
+          "name": "选择记录",
+          "behavior": "每次选择后记录到 choices_log：{year, event_title, choice_key, choice_text, consequences}，用于结算回顾和 AI 上下文输入",
+          "done": true
+        },
+        {
+          "id": "F044",
+          "name": "隐性数值触发机制",
+          "behavior": "隐性数值到达阈值时触发特殊事件或状态变更：stress>80 触发健康事件、relationship<20 触发分手/家庭冲突、social 高时出现贵人事件、reputation 高时有机会主动找上门",
+          "done": true
+        },
+        {
+          "id": "F045",
+          "name": "BTC 买卖操作",
+          "behavior": "在投资类选项中，玩家可以买入/卖出 BTC；买入时按当年价格用存款购买，更新 btc_amount 和 savings；卖出时 btc_amount 减少、savings 增加；记录 max_btc_held 和 times_sold_btc",
+          "done": true
+        },
+        {
+          "id": "F046",
+          "name": "月度收支结算",
+          "behavior": "每年结算时自动计算年度净收入：(monthly_salary - monthly_expense) × 12 加入 savings；职业变动事件可改变 monthly_salary 和 is_employed 状态",
+          "done": true
+        }
+      ]
+    },
+
+    "M06_game_engine": {
+      "name": "游戏主引擎",
+      "features": [
+        {
+          "id": "F050",
+          "name": "游戏主循环 — 年度推进",
+          "behavior": "游戏从2015年开始，每年执行：年初展示(年份+数值+历史背景) → 事件触发(1-2个) → 玩家选择 → 后果结算 → 年末总结 → 推进到下一年；直到2025年结束",
+          "done": true
+        },
+        {
+          "id": "F051",
+          "name": "开场序列",
+          "behavior": "展示 ReRun logo + 穿越开场文案(打字机效果) + 系统旁白 + 起始存款选择；选择后初始化 PlayerState 并进入第一年",
+          "done": true
+        },
+        {
+          "id": "F052",
+          "name": "结算序列",
+          "behavior": "2025年结束后展示：最终资产总额 + 资产构成明细表 + 你 vs 普通人(不穿越基准线¥300,000-500,000)对比柱状图 + 关键抉择回顾时间线 + 成就列表 + AI 生成总评",
+          "done": true
+        },
+        {
+          "id": "F053",
+          "name": "结算后操作",
+          "behavior": "结算画面底部展示三个选项：[R] 再来一次（重新开始，不同随机事件）/ [S] 分享结算卡 / [Q] 退出游戏",
+          "done": true
+        },
+        {
+          "id": "F054",
+          "name": "再来一次(Rerun)",
+          "behavior": "选择再来一次后重置 PlayerState 到初始状态，重新进入起始存款选择；AI 生成事件因随机性不同，保证每次 run 的体验不同",
+          "done": true
+        },
+        {
+          "id": "F055",
+          "name": "游戏时长记录",
+          "behavior": "记录从开场到结算的总游戏时长，在结算画面显示(如 '游戏时长: 12 分钟')",
+          "done": true
+        }
+      ]
+    },
+
+    "M07_llm_layer": {
+      "name": "LLM 抽象层",
+      "features": [
+        {
+          "id": "F060",
+          "name": "LLMClient 统一接口",
+          "behavior": "所有 LLM 调用通过 LLMClient 类；支持 provider(openai) 和 model(gpt-4o-mini) 配置；使用 asyncio + httpx 异步调用；预留 Claude/DeepSeek/Ollama 扩展接口",
+          "done": true
+        },
+        {
+          "id": "F061",
+          "name": "generate_event — 事件生成",
+          "behavior": "接收 EventContext(年份+状态+历史+排除类型)，调用 LLM 用 JSON mode(response_format=json_object)，返回结构化 GameEvent 对象；temperature=0.9",
+          "done": true
+        },
+        {
+          "id": "F062",
+          "name": "generate_narrator_line — 旁白生成",
+          "behavior": "接收 situation 描述，生成 1-2 句系统旁白；风格：毒舌善意/打破第四面墙/用梗；可与事件生成合并为一次调用以节省 API 次数",
+          "done": true
+        },
+        {
+          "id": "F063",
+          "name": "generate_ending_summary — 结局总评",
+          "behavior": "接收最终 PlayerState + choices_log + achievements，生成 3-5 句个性化结局总评文案",
+          "done": true
+        },
+        {
+          "id": "F064",
+          "name": "LLM 输出解析 parser.py",
+          "behavior": "将 LLM 返回的 JSON 字符串解析为 GameEvent/Choice 等 Pydantic 模型；解析失败时记录错误并触发 fallback 事件",
+          "done": true
+        },
+        {
+          "id": "F065",
+          "name": "Prompt 模板管理 prompts.py",
+          "behavior": "集中管理所有 prompt 模板：EVENT_GENERATION_PROMPT(事件生成)、NARRATOR_PROMPT(旁白生成)、ENDING_PROMPT(总评生成)；模板支持变量填充(f-string 或 .format)",
+          "done": true
+        },
+        {
+          "id": "F066",
+          "name": "LLM 调用失败 Fallback",
+          "behavior": "API 调用超时(10s)/报错/解析失败时，自动降级到本地 fallback 事件池；记录失败日志但不中断游戏；整局游戏约 10-15 次调用，成本控制在 $0.05 以内",
+          "done": true
+        },
+        {
+          "id": "F067",
+          "name": "离线模式",
+          "behavior": "启动时检测 API key 是否配置或通过 --offline 参数强制离线；离线模式下所有事件从 fallback 池生成，旁白从 narrator_lines.json 抽取，结局总评用模板拼装",
+          "done": true
+        }
+      ]
+    },
+
+    "M08_cli_ui": {
+      "name": "CLI 终端界面",
+      "features": [
+        {
+          "id": "F070",
+          "name": "年度头部渲染",
+          "behavior": "使用 rich Panel + Table 展示：年份标题(大号加粗) + 数值面板(存款/BTC/房产/股票/压力/关系/社交/声望)，数值带对应 emoji，用彩色高亮关键数字",
+          "done": true
+        },
+        {
+          "id": "F071",
+          "name": "事件渲染",
+          "behavior": "事件描述用打字机效果逐字显示；选项用 rich Panel 框起，每个选项含字母标识+描述+系统提示(hint, dim italic 样式)",
+          "done": true
+        },
+        {
+          "id": "F072",
+          "name": "后果渲染 — 数值变化",
+          "behavior": "选择后展示数值变化面板：每个变化值显示 旧值 → 新值(+/-差值)；增长用绿色，下降用红色；关键数字(资产/BTC价格)加粗高亮",
+          "done": true
+        },
+        {
+          "id": "F073",
+          "name": "打字机效果 typewriter",
+          "behavior": "关键文案(开场白/事件描述/旁白/结局总评)逐字符显示，默认速度 0.03s/字符，营造叙事沉浸感",
+          "done": true
+        },
+        {
+          "id": "F074",
+          "name": "数字跳动效果",
+          "behavior": "资产数值变化时从旧值滚动到新值(类似老虎机效果)，增强数字变化的视觉冲击力",
+          "done": true
+        },
+        {
+          "id": "F075",
+          "name": "年份分隔线",
+          "behavior": "年份切换时用 ━━━ 分隔线做视觉分隔，年份标题居中显示",
+          "done": true
+        },
+        {
+          "id": "F076",
+          "name": "旁白样式",
+          "behavior": "系统旁白以 '💬 [系统]' 开头，使用 dim italic 或特定颜色(如青色)渲染，与正文内容在视觉上区分",
+          "done": true
+        },
+        {
+          "id": "F077",
+          "name": "开场画面",
+          "behavior": "展示 ReRun ASCII art logo + 穿越文案 + 系统旁白 + 起始存款选择菜单；整体风格营造穿越重生的氛围感",
+          "done": true
+        },
+        {
+          "id": "F078",
+          "name": "结算画面",
+          "behavior": "展示：最终资产大字 + 资产构成表格(rich Table) + 你vs普通人柱状图(rich bar) + 关键抉择时间线 + 成就列表(emoji+名称+描述) + AI总评 + 操作菜单(R/S/Q)",
+          "done": true
+        },
+        {
+          "id": "F079",
+          "name": "Emoji 数值指示器",
+          "behavior": "所有数值展示带对应 emoji：💰存款 🪙BTC 🏠房产 📈股票 😰压力 💕关系 🤝社交 🌟声望，增强可读性和趣味性",
+          "done": true
+        }
+      ]
+    },
+
+    "M09_achievement_system": {
+      "name": "成就系统",
+      "features": [
+        {
+          "id": "F080",
+          "name": "成就判定引擎",
+          "behavior": "每次选择后和游戏结算时检查所有成就条件；满足条件的成就自动解锁并加入 PlayerState.achievements；同一成就不重复解锁",
+          "done": true
+        },
+        {
+          "id": "F081",
+          "name": "投资类成就",
+          "behavior": "💎钻石手(BTC跌>50%没卖) / 🤡小丑(穿越了还亏钱) / 🏦地主(3+套房) / 📈十倍先生(总资产翻10倍) / 💸纸手(每次暴跌都卖) / 🎯精准抄底(最低点买入)，每个有明确的数值判定逻辑",
+          "done": true
+        },
+        {
+          "id": "F082",
+          "name": "生活类成就",
+          "behavior": "💕人生赢家(有钱+有伴侣+关系好) / 💔渣男渣女(分手2+次) / 🧘佛系(压力全程<50) / 😭意难平(不如不穿越基准线) / 👪孝子(每次帮家人) / 🐺独狼(拒绝所有社交感情)，每个有明确判定逻辑",
+          "done": true
+        },
+        {
+          "id": "F083",
+          "name": "隐藏成就",
+          "behavior": "🌟先知(连续5次最优选择) / 🎪故事大王(触发8+种事件类型) / 💀破产重生(归零后东山再起) / 🔮穿越者暴露(行为太离谱被怀疑)，不在成就列表预告，解锁时才显示",
+          "done": true
+        },
+        {
+          "id": "F084",
+          "name": "成就解锁通知",
+          "behavior": "成就解锁时在当前事件后果展示后弹出通知：'🏆 成就解锁：[emoji] [名称] — [描述]'，有短暂的视觉强调效果",
+          "done": true
+        }
+      ]
+    },
+
+    "M10_narrator": {
+      "name": "旁白系统",
+      "features": [
+        {
+          "id": "F090",
+          "name": "旁白人格定义",
+          "behavior": "系统旁白人格：毒舌但善意(吐槽不恶意)、Meta/打破第四面墙(知道这是游戏)、用梗(网络用语/emoji/流行文化)、简洁有力(1-2句偶尔3句)；以 '💬 [系统]' 开头",
+          "done": true
+        },
+        {
+          "id": "F091",
+          "name": "情境旁白生成",
+          "behavior": "根据玩家当前行为和状态生成契合情境的旁白：买BTC时/暴涨时/暴跌时/家人事件/感情选择/破产/暴富等场景各有不同风格的吐槽",
+          "done": true
+        },
+        {
+          "id": "F092",
+          "name": "中英双语旁白",
+          "behavior": "中文版主体中文夹带英文梗；英文版风格为 dry humor / sarcastic narrator；根据 GAME_LANGUAGE 配置切换",
+          "done": true
+        }
+      ]
+    },
+
+    "M11_offline_mode": {
+      "name": "离线模式",
+      "features": [
+        {
+          "id": "F100",
+          "name": "无 API 完整可玩",
+          "behavior": "不配置 OPENAI_API_KEY 或使用 --offline 参数时，游戏使用 fallback 事件池 + 预设旁白 + 模板结局总评，完整 10 年流程可正常运行",
+          "done": true
+        },
+        {
+          "id": "F101",
+          "name": "Fallback 事件池随机抽取",
+          "behavior": "离线模式下从 life_events.json 按类型随机抽取模板，填充随机变量(人名/金额/病名等)生成事件；同一 run 内不重复抽取同一模板",
+          "done": true
+        }
+      ]
+    },
+
+    "M12_testing": {
+      "name": "测试",
+      "features": [
+        {
+          "id": "F110",
+          "name": "test_engine.py — 引擎核心测试",
+          "behavior": "测试 PlayerState 创建/更新/净资产计算；测试游戏主循环年度推进逻辑；测试月度收支结算正确性",
+          "done": true
+        },
+        {
+          "id": "F111",
+          "name": "test_events.py — 事件系统测试",
+          "behavior": "测试历史事件加载正确性；测试 fallback 事件生成；测试事件类型去重；测试 GameEvent/Choice 模型验证",
+          "done": true
+        },
+        {
+          "id": "F112",
+          "name": "test_llm.py — LLM 层测试",
+          "behavior": "测试 prompt 模板变量填充；测试 JSON 解析器对正常/异常输出的处理；测试 fallback 触发机制；mock API 调用测试",
+          "done": true
+        },
+        {
+          "id": "F113",
+          "name": "端到端测试",
+          "behavior": "使用离线模式跑通完整 10 年流程(自动选择)，验证状态流转无异常、不抛出未处理异常、结算数据完整",
+          "done": true
+        }
+      ]
+    },
+
+    "M13_publish": {
+      "name": "发布与传播",
+      "features": [
+        {
+          "id": "F120",
+          "name": "README.md 英文主文档",
+          "behavior": "包含：项目一句话介绍 + 终端 GIF demo + 安装方法(pip install) + 快速开始 + 功能特性列表 + 技术栈 + Contributing + License(MIT)",
+          "done": true
+        },
+        {
+          "id": "F121",
+          "name": "README_CN.md 中文文档",
+          "behavior": "README.md 的完整中文版，语言风格更贴近中文社区，包含小红书/即刻等中文平台传播入口",
+          "done": true
+        },
+        {
+          "id": "F122",
+          "name": "终端 GIF 录制",
+          "behavior": "使用 asciinema 或 terminalizer 录制一次完整 run 的精华片段(开场+1-2个事件+结算)，时长控制在 30-60 秒",
+          "done": false
+        },
+        {
+          "id": "F123",
+          "name": "投资 Disclaimer",
+          "behavior": "README 和游戏开场均包含免责声明：游戏中的投资选项不构成真实投资建议，BTC 价格基于历史数据",
+          "done": true
+        }
+      ]
+    }
+  },
+
+  "stats": {
+    "total_modules": 13,
+    "total_features": 69,
+    "completed": 68,
+    "progress": "98.6%"
+  }
+}

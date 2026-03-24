@@ -1,0 +1,464 @@
+{
+  "family": [
+    {
+      "template": "parent_sick",
+      "title": "父/母生病",
+      "description_template": "你{parent}查出了{illness}，医生建议尽快手术，费用大概需要{cost}。\n\n你看了看银行卡余额，又看了看那个数字不断跳动的币价……",
+      "variables": {
+        "parent": ["爸", "妈"],
+        "illness": ["甲状腺结节需要手术", "腰椎间盘突出严重需要手术", "心脏需要放支架"],
+        "cost": [80000, 120000, 200000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "卖掉部分投资，全力治疗",
+          "hint": "💬 [系统] 亲情无价。但你的BTC也挺值钱的。",
+          "consequences": { "savings": -1, "relationship": 15, "stress": -10, "times_helped_family": 1 },
+          "narrative": "手术很成功。{parent}握着你的手说谢谢。你假装眼睛没红。"
+        },
+        {
+          "key": "B",
+          "text": "想办法借钱凑手术费，投资不动",
+          "hint": "💬 [系统] 你开始到处借钱的样子，像极了没穿越的自己。",
+          "consequences": { "savings": -30000, "stress": 25, "social": -10, "relationship": 5 },
+          "narrative": "你跑了三个朋友、两个亲戚，总算凑够了。{parent}手术顺利，但你欠了一屁股人情。"
+        },
+        {
+          "key": "C",
+          "text": "建议先保守治疗，观察一段时间",
+          "hint": "💬 [系统] 你知道这病拖不得。但你更知道BTC明年会……算了。",
+          "consequences": { "relationship": -20, "stress": 15 },
+          "narrative": "你{parent}叹了口气说「行吧」。但你能感觉到，有些东西变了。"
+        }
+      ]
+    },
+    {
+      "template": "parent_pressure_house",
+      "title": "父母催你买房",
+      "description_template": "你妈又打电话了。\n\n「{city}的房价又涨了，你再不买就真买不起了！隔壁老{neighbor}家儿子都买了两套了！」\n\n你深吸一口气。你知道房价的走势，但你没法跟你妈解释区块链。",
+      "variables": {
+        "city": ["北京", "上海", "杭州", "你们老家"],
+        "neighbor": ["王", "李", "张", "赵"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "听妈的话，咬牙买一套",
+          "hint": "💬 [系统] 孝顺+1，BTC持仓-N。你妈笑了。你的钱包哭了。",
+          "consequences": { "savings": -300000, "properties": 1, "relationship": 20, "stress": 15 },
+          "narrative": "你签下了人生第一套房的合同。你妈笑得合不拢嘴，当晚做了一桌子好菜。"
+        },
+        {
+          "key": "B",
+          "text": "耐心解释你有别的投资计划",
+          "hint": "💬 [系统] 「妈，我买了一种叫比特币的东西……」\n「传销吗？！」",
+          "consequences": { "relationship": -10, "stress": 10 },
+          "narrative": "你花了一个小时试图解释什么是比特币。你妈的表情从困惑变成了担忧。挂电话前她说「你别被骗了」。"
+        },
+        {
+          "key": "C",
+          "text": "敷衍：「我在看了，快了」",
+          "hint": "💬 [系统] 拖延大法好。但你妈下个月还会打电话的。",
+          "consequences": { "relationship": -5, "stress": 5 },
+          "narrative": "你妈将信将疑地挂了电话。你知道这只是暂时的。"
+        }
+      ]
+    },
+    {
+      "template": "sibling_tuition",
+      "title": "弟弟/妹妹需要学费",
+      "description_template": "你{sibling}考上了{school}，一年学费加生活费要{cost}。\n\n爸妈凑不出来，希望你帮一把。",
+      "variables": {
+        "sibling": ["弟弟", "妹妹"],
+        "school": ["一本大学", "研究生", "出国留学"],
+        "cost": [30000, 50000, 150000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "全额资助，不就是钱嘛",
+          "hint": "💬 [系统] 大方！你的BTC表示：「哥/姐，我也是你家人啊。」",
+          "consequences": { "savings": -1, "relationship": 15, "reputation": 10, "times_helped_family": 1 },
+          "narrative": "你{sibling}激动得语无伦次，发了一条朋友圈：「感谢我哥/姐，永远的superhero。」"
+        },
+        {
+          "key": "B",
+          "text": "出一半，让家里想想别的办法",
+          "hint": "💬 [系统] 折中方案。不算慷慨，但也说得过去。",
+          "consequences": { "savings": -1, "relationship": 5, "stress": 5 },
+          "narrative": "爸妈东拼西凑了剩下的钱。你{sibling}顺利入学了。"
+        },
+        {
+          "key": "C",
+          "text": "建议申请助学贷款",
+          "hint": "💬 [系统] 理性选择。但亲情账不能只算经济账。",
+          "consequences": { "relationship": -15, "stress": 10 },
+          "narrative": "你{sibling}沉默了很久，最后说了句「好」。过年的时候，气氛有点微妙。"
+        }
+      ]
+    }
+  ],
+
+  "romance": [
+    {
+      "template": "meet_someone",
+      "title": "遇到了一个不错的人",
+      "description_template": "在{场合}，你遇到了一个{description}的{gender}。\n\nTA对你有好感，主动加了你微信。你们聊得很投机。",
+      "variables": {
+        "场合": ["朋友聚会上", "咖啡店里", "同事介绍下", "相亲时"],
+        "description": ["温柔体贴", "聪明有趣", "阳光开朗", "独立有主见"],
+        "gender": ["姑娘", "男生"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "认真发展这段关系",
+          "hint": "💬 [系统] 重生一次总得谈个恋爱吧？钱不会半夜给你发消息。嗯……交易所通知除外。",
+          "consequences": { "has_partner": true, "relationship": 30, "stress": -10, "monthly_expense": 2000, "social": 10 },
+          "narrative": "你开始了一段新的感情。约会、看电影、一起吃饭……生活突然多了很多色彩。当然，也多了很多开支。"
+        },
+        {
+          "key": "B",
+          "text": "保持暧昧，但不急着确定关系",
+          "hint": "💬 [系统] 薛定谔的恋爱。不打开盒子就永远不会分手。",
+          "consequences": { "social": 5, "stress": 5 },
+          "narrative": "你们保持着不远不近的距离。偶尔约饭，偶尔聊天。像是朋友以上，恋人未满。"
+        },
+        {
+          "key": "C",
+          "text": "婉拒，现在不想谈恋爱",
+          "hint": "💬 [系统] 选C的话，孤独值+10。你确定？重生一次不谈恋爱？\n……好吧，尊重。毕竟钱不会半夜跟你吵架。",
+          "consequences": { "social": -5, "stress": -5 },
+          "narrative": "你礼貌地拒绝了。对方有点失望。你打开交易所，看着绿色的数字，告诉自己这没什么。"
+        }
+      ]
+    },
+    {
+      "template": "partner_conflict_btc",
+      "title": "伴侣对你的投资行为不满",
+      "description_template": "你的另一半发现你半夜三点还在看K线图。\n\n「你最近到底在干什么？天天盯着手机，我跟你说话你都不听！」\n\nTA翻了你的手机，看到了交易所的数字。",
+      "variables": {},
+      "choices": [
+        {
+          "key": "A",
+          "text": "坦白一切，分享你的投资计划",
+          "hint": "💬 [系统] 「亲爱的，我买了比特币。」\n「那是什么？能吃吗？」\n这场对话的难度系数约等于给你妈解释元宇宙。",
+          "consequences": { "relationship": 10, "stress": -10 },
+          "narrative": "你花了一晚上解释。TA半信半疑，但最终选择相信你。「好吧，但你要是亏了……」"
+        },
+        {
+          "key": "B",
+          "text": "轻描淡写，说只是小额投资",
+          "hint": "💬 [系统] 撒谎的代价是：如果TA以后发现真相，关系值-30。",
+          "consequences": { "relationship": -5, "stress": 10 },
+          "narrative": "「就买了一点点，没多少钱。」TA将信将疑地看了你一眼，没再追问。但你心虚了一整天。"
+        },
+        {
+          "key": "C",
+          "text": "反过来吵一架：「你管太多了」",
+          "hint": "💬 [系统] ……你确定？这种选项谁设计的。哦等等，是我。",
+          "consequences": { "relationship": -25, "stress": 20 },
+          "narrative": "你们大吵了一架。TA摔门出去了。你一个人坐在沙发上，手机上BTC又涨了2%，但你一点都高兴不起来。"
+        }
+      ]
+    },
+    {
+      "template": "marriage_pressure",
+      "title": "到了谈婚论嫁的阶段",
+      "description_template": "你和另一半在一起{duration}了。\n\nTA的父母开始催婚了。彩礼{bride_price}，婚礼预算{wedding_cost}，还得考虑买房。",
+      "variables": {
+        "duration": ["一年", "两年", "三年"],
+        "bride_price": [100000, 168000, 200000],
+        "wedding_cost": [80000, 150000, 200000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "结婚！人生大事不能省",
+          "hint": "💬 [系统] 恭喜你即将解锁「已婚」状态。代价：一大笔钱和一个需要对账的人。",
+          "consequences": { "savings": -1, "relationship": 25, "stress": 15, "reputation": 10, "monthly_expense": 3000 },
+          "narrative": "你们办了一场温馨的婚礼。朋友圈收获了300+个赞。你的银行卡收获了一场大出血。"
+        },
+        {
+          "key": "B",
+          "text": "提议先领证再说，婚礼以后办",
+          "hint": "💬 [系统] 务实。但对方家长可能不太高兴。",
+          "consequences": { "savings": -50000, "relationship": 5, "stress": 5 },
+          "narrative": "你们低调领了证。你的另一半理解你，但TA父母的脸色不太好看。"
+        },
+        {
+          "key": "C",
+          "text": "坦白说现在经济压力大，再等等",
+          "hint": "💬 [系统] 再等等是最危险的三个字。",
+          "consequences": { "relationship": -20, "stress": 15 },
+          "narrative": "TA的眼神从期待变成了失望。「你到底在等什么？」你没法说出实话。"
+        }
+      ]
+    }
+  ],
+
+  "career": [
+    {
+      "template": "promotion",
+      "title": "升职加薪机会",
+      "description_template": "领导找你谈话：「公司准备提拔你做{position}，月薪涨到{salary}。但是——你得多承担一些，以后加班会比较多。」",
+      "variables": {
+        "position": ["技术主管", "项目经理", "部门副总监"],
+        "salary": [15000, 20000, 30000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "接受升职，全力以赴",
+          "hint": "💬 [系统] 恭喜升职。代价是你再也没时间盯盘了。好吧，也许这反而是好事。",
+          "consequences": { "monthly_salary": 1, "stress": 20, "reputation": 15, "job_title": "" },
+          "narrative": "你正式上任了。工资涨了，但下班时间也没了。你开始理解为什么有人说「升职是另一种KPI」。"
+        },
+        {
+          "key": "B",
+          "text": "婉拒，现在的工作节奏挺好的",
+          "hint": "💬 [系统] 你拒绝了一个在「正常世界线」里梦寐以求的机会。因为你有外挂。",
+          "consequences": { "reputation": -5, "stress": -5 },
+          "narrative": "领导有点意外，但没说什么。同事们觉得你很佛系。你笑了笑，打开了手机看了眼币价。"
+        }
+      ]
+    },
+    {
+      "template": "layoff",
+      "title": "被裁员了",
+      "description_template": "HR约你到会议室。\n\n「由于公司业务调整，你的岗位将被优化……」\n\n赔偿N+1，大约能拿{severance}。",
+      "variables": {
+        "severance": [30000, 50000, 80000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "接受裁员，正好全职搞投资/创业",
+          "hint": "💬 [系统] 自由了！但没有月薪的日子，你的月支出可不会停。",
+          "consequences": { "savings": 1, "is_employed": false, "monthly_salary": 0, "stress": 15, "reputation": -5 },
+          "narrative": "你收拾了工位，在电梯里深呼吸了一次。自由的感觉……有点慌。"
+        },
+        {
+          "key": "B",
+          "text": "赶紧找下一份工作",
+          "hint": "💬 [系统] 打工人永不停歇。稳定的现金流是你的安全垫。",
+          "consequences": { "savings": 1, "stress": 20, "job_title": "跳槽新人" },
+          "narrative": "你花了两周面试了五家公司，拿到了一个offer。薪资差不多，但至少还有月薪。"
+        }
+      ]
+    },
+    {
+      "template": "startup_opportunity",
+      "title": "同事拉你一起创业",
+      "description_template": "前同事{name}找到你：「我看准了一个{field}方向的机会，需要一个技术合伙人。你来不来？起步资金大概需要每人{investment}。」",
+      "variables": {
+        "name": ["老陈", "小刘", "Jack"],
+        "field": ["AI应用", "跨境电商", "新消费"],
+        "investment": [100000, 200000, 500000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "加入！搏一把",
+          "hint": "💬 [系统] 创业九死一生。但你是重生者，你有信息差。也许。",
+          "consequences": { "savings": -1, "is_employed": false, "monthly_salary": 0, "stress": 30, "reputation": 10, "social": 10 },
+          "narrative": "你辞了职，和{name}租了个小办公室。创业的日子开始了。刺激，但也真的累。"
+        },
+        {
+          "key": "B",
+          "text": "不辞职，但可以投点钱当股东",
+          "hint": "💬 [系统] 又想吃肉又不想挨打。经典操作。",
+          "consequences": { "savings": -1, "stress": 10 },
+          "narrative": "你出了钱但没出力。{name}偶尔给你发进展，你偶尔点个赞。"
+        },
+        {
+          "key": "C",
+          "text": "算了，我还是做好自己的事",
+          "hint": "💬 [系统] 稳如老狗。但万一人家成了呢？FOMO值+10。",
+          "consequences": { "stress": 5, "social": -5 },
+          "narrative": "你婉拒了。{name}有点失望。你安慰自己：我有BTC，不需要创业。"
+        }
+      ]
+    }
+  ],
+
+  "social": [
+    {
+      "template": "friend_borrow_money",
+      "title": "好朋友找你借钱",
+      "description_template": "你最好的朋友{name}找你借{amount}。\n\n「{reason}，过两个月一定还你。」\n\n你知道TA人品不错，但{amount}也不是小数目。",
+      "variables": {
+        "name": ["小王", "阿强", "老李"],
+        "amount": [50000, 100000, 200000],
+        "reason": ["家里急用，老人住院了", "创业周转不过来", "买房差一点首付"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "二话不说，借！",
+          "hint": "💬 [系统] 仗义！但提醒你，「借钱」是中文里最高级的冒险运动之一。",
+          "consequences": { "savings": -1, "social": 20, "relationship": 5, "stress": 10 },
+          "narrative": "你转了钱过去。{name}感动得快哭了，发誓一定还。你相信TA。……大概吧。"
+        },
+        {
+          "key": "B",
+          "text": "借一半，量力而行",
+          "hint": "💬 [系统] 半借半不借。友谊的艺术。",
+          "consequences": { "savings": -1, "social": 5, "stress": 5 },
+          "narrative": "你借了一半。{name}理解你的难处，连连道谢。"
+        },
+        {
+          "key": "C",
+          "text": "抱歉，我最近也紧张",
+          "hint": "💬 [系统] 假装穷。作为一个隐形BTC富翁，你的演技需要练练。",
+          "consequences": { "social": -15, "stress": 5 },
+          "narrative": "你编了个理由拒绝了。{name}说「没事没事」，但你能听出声音里的失望。从此你们聊天少了很多。"
+        }
+      ]
+    },
+    {
+      "template": "p2p_scam",
+      "title": "有人拉你投P2P/高收益项目",
+      "description_template": "亲戚{relative}热情地拉你：「{project_name}，年化收益{return_rate}%，我已经投了{invested}了，每个月都在返利！你也来！」\n\n你作为过来人，知道这东西迟早暴雷。",
+      "variables": {
+        "relative": ["表哥", "舅舅", "大伯", "你姑"],
+        "project_name": ["e租宝", "钱宝网", "一个新的理财平台"],
+        "return_rate": [12, 18, 24],
+        "invested": [100000, 200000, 500000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "坚决不投，并试图劝阻对方",
+          "hint": "💬 [系统] 你知道这是庞氏骗局。但「我是从未来穿越回来的」可能不是一个有说服力的论据。",
+          "consequences": { "social": -10, "reputation": 5 },
+          "narrative": "你苦口婆心劝了半天。{relative}觉得你不识好歹。但等到暴雷那天，TA会感谢你的。也许。"
+        },
+        {
+          "key": "B",
+          "text": "象征性投一小笔，给面子",
+          "hint": "💬 [系统] 面子值+10，钱包值-N。这笔钱大概率打水漂。",
+          "consequences": { "savings": -10000, "social": 5 },
+          "narrative": "你意思意思投了一点。{relative}高兴坏了。你心里默默给这笔钱办了场葬礼。"
+        },
+        {
+          "key": "C",
+          "text": "找借口拖着不投",
+          "hint": "💬 [系统] 拖延大法再次出场。",
+          "consequences": { "social": -5 },
+          "narrative": "你各种找借口推脱。{relative}还是会时不时来「提醒」你。"
+        }
+      ]
+    },
+    {
+      "template": "classmate_showing_off",
+      "title": "老同学聚会炫富",
+      "description_template": "同学聚会上，{classmate}开着{car}来的，全程在聊TA的{business}，一年赚了{income}万。\n\n所有人都在羡慕，有人看了你一眼：「你现在在做什么？」",
+      "variables": {
+        "classmate": ["当年的学渣张伟", "班花小美", "班长"],
+        "car": ["保时捷", "特斯拉", "奔驰GLC"],
+        "business": ["互联网公司", "拆迁赔偿款投资", "直播带货"],
+        "income": [100, 200, 500]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "低调微笑：「就普通上班呗」",
+          "hint": "💬 [系统] 扮猪吃老虎。你BTC账户里的数字够买TA那车好几辆。但你选择沉默。这就是格局。",
+          "consequences": { "stress": -5, "reputation": 5 },
+          "narrative": "你笑了笑没多说。有人觉得你混得一般，但你心里门儿清。"
+        },
+        {
+          "key": "B",
+          "text": "忍不住暗示自己也在做投资",
+          "hint": "💬 [系统] 虚荣心警告。这种暗示在重生者指南里属于「高风险行为」。",
+          "consequences": { "reputation": 10, "stress": 5, "social": 5 },
+          "narrative": "你若无其事地提了一嘴。有几个人来了兴趣追问，你赶紧岔开话题。"
+        },
+        {
+          "key": "C",
+          "text": "提前离场，这种聚会没意思",
+          "hint": "💬 [系统] 社恐/社牛 superposition 坍缩了——社恐赢了。",
+          "consequences": { "social": -10, "stress": -5 },
+          "narrative": "你借口有事先走了。回家路上刷了眼行情，嘴角微微上扬。"
+        }
+      ]
+    }
+  ],
+
+  "accident": [
+    {
+      "template": "phone_lost",
+      "title": "手机丢了",
+      "description_template": "你的手机{scenario}不见了。\n\n里面有交易所APP、银行APP、微信支付……还有一堆没来得及备份的照片。\n\n冷汗瞬间下来了。",
+      "variables": {
+        "scenario": ["在地铁上被偷了", "在餐厅落下了", "从口袋里滑出去摔碎了"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "立刻冻结所有账户，买新手机",
+          "hint": "💬 [系统] 冷静。你的BTC在交易所/冷钱包里，不在手机里。深呼吸。",
+          "consequences": { "savings": -8000, "stress": 20 },
+          "narrative": "你手忙脚乱地冻结了所有账户，又花了8000买了台新手机。虚惊一场，但接下来三天你一直在改密码。"
+        },
+        {
+          "key": "B",
+          "text": "找朋友借手机先把关键账户锁了",
+          "hint": "💬 [系统] 社交值终于派上用场了。",
+          "consequences": { "savings": -5000, "stress": 15, "social": -5 },
+          "narrative": "你借了朋友手机处理完紧急事务，然后买了个便宜的替代机过渡。"
+        }
+      ]
+    },
+    {
+      "template": "exchange_hack",
+      "title": "交易所出事了",
+      "description_template": "你常用的交易所突然发公告：「因安全事件，暂停所有提币服务。」\n\n你在上面还有{amount}个BTC。\n\n社交媒体上已经炸了锅。",
+      "variables": {
+        "amount": [2, 5, 10]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "立刻把其他平台的币转到冷钱包",
+          "hint": "💬 [系统] Not your keys, not your coins. 这句话今天格外扎心。",
+          "consequences": { "btc_amount": -1, "stress": 30 },
+          "narrative": "你花了一整晚把所有能转的币都转到了自己的冷钱包。交易所那部分……只能等消息了。"
+        },
+        {
+          "key": "B",
+          "text": "先观望，也许只是技术维护",
+          "hint": "💬 [系统] 乐观主义者。你上辈子也是这样错过止损时机的吗？哦等等，你上辈子没BTC。",
+          "consequences": { "stress": 20 },
+          "narrative": "你焦虑地刷着各种消息。有人说没事，有人说完了。你一夜没睡。"
+        }
+      ]
+    },
+    {
+      "template": "tax_issue",
+      "title": "税务问题",
+      "description_template": "你收到了一份税务通知：你的一些「大额资金流动」引起了关注。\n\n需要解释资金来源，可能涉及补税{tax_amount}。",
+      "variables": {
+        "tax_amount": [20000, 50000, 100000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "老实申报，该交的税交了",
+          "hint": "💬 [系统] 合法纳税，好公民。虽然心在滴血。",
+          "consequences": { "savings": -1, "stress": -10, "reputation": 10 },
+          "narrative": "你找了个会计师朋友帮忙梳理，老老实实补了税。虽然肉疼，但至少晚上睡得着了。"
+        },
+        {
+          "key": "B",
+          "text": "找专业人士看看能不能合理避税",
+          "hint": "💬 [系统] 合理避税不等于偷税……大概。",
+          "consequences": { "savings": -1, "stress": 10 },
+          "narrative": "你花了一笔咨询费，最终少交了一些。心里不太踏实，但钱包感谢你。"
+        }
+      ]
+    }
+  ]
+}

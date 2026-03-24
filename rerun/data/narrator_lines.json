@@ -1,0 +1,150 @@
+{
+  "opening": {
+    "cn": [
+      "💬 [系统] 检测到重生者意识。金手指加载完毕。\n   注意：本系统不保证重生者一定能逆天改命。\n   上一个重生者知道所有答案，最后还是亏了。\n   ……祝你好运。",
+      "💬 [系统] 欢迎回到2015年。你手里有一笔钱和满脑子的未来记忆。\n   提醒一下：知道答案和拿到分数之间，隔着一整个人生。"
+    ],
+    "en": [
+      "💬 [System] Reborn consciousness detected. Cheat code loaded.\n   Warning: This system does not guarantee destiny rewriting.\n   The last reborn player knew all the answers. Still lost money.\n   ...Good luck.",
+      "💬 [System] Welcome back to 2015. You've got some cash and a head full of future memories.\n   Reminder: knowing the answers and getting the score are two very different things."
+    ]
+  },
+
+  "buy_btc": {
+    "cn": [
+      "💬 [系统] 你买了BTC。在2015年。当所有人都觉得这是骗局的时候。\n   你是先知还是赌徒？其实都一样，反正你是重生的。",
+      "💬 [系统] 恭喜入场。现在你只需要做一件事：拿住。\n   听起来很简单对吧？等着瞧。"
+    ],
+    "en": [
+      "💬 [System] You bought BTC. In 2015. When everyone thought it was a scam.\n   Prophet or gambler? Doesn't matter — you've got the cheat code.",
+      "💬 [System] Welcome aboard. Now you just need to do one thing: HODL.\n   Sounds easy, right? Just wait."
+    ]
+  },
+
+  "btc_pump": {
+    "cn": [
+      "💬 [系统] BTC又涨了。你感觉自己是巴菲特和中本聪的私生子。\n   冷静点，重生者。你上辈子这时候在干嘛来着？哦对，在还花呗。",
+      "💬 [系统] 看着账户里的数字，你嘴角不自觉上扬。\n   提醒：不要在公共场合露出这种表情，会被当成变态。",
+      "💬 [系统] 涨了涨了。你开始理解为什么有人说「BTC是世界上最好的安眠药」。\n   因为你已经三天没睡觉了。"
+    ],
+    "en": [
+      "💬 [System] BTC pumped again. You feel like the love child of Buffett and Satoshi.\n   Calm down, reborn one. Last time around, you were paying off credit card debt right now.",
+      "💬 [System] Your portfolio is up. Way up. Try not to grin like a maniac in public.",
+      "💬 [System] Number go up. You're starting to understand why they call BTC 'the world's best sleeping pill.'\n   Because you haven't slept in three days."
+    ]
+  },
+
+  "btc_dump": {
+    "cn": [
+      "💬 [系统] BTC跌了。你的账户在流血。\n   但你知道未来。你是重生者。你能扛住。\n   ……能扛住吧？",
+      "💬 [系统] 暴跌80%。你的手在发抖，不是因为冷。\n   你知道它会涨回来。但你的身体不知道。",
+      "💬 [系统] 朋友圈里有人在发「早就说了是骗局」。\n   你很想截图你的买入记录怼回去，但你忍住了。重生者的修养。"
+    ],
+    "en": [
+      "💬 [System] BTC crashed. Your portfolio is bleeding.\n   But you know the future. You're reborn. You can handle this.\n   ...Right?",
+      "💬 [System] Down 80%. Your hands are shaking. Not from the cold.\n   You KNOW it'll come back. Your body doesn't.",
+      "💬 [System] Someone on social media: 'Told you it was a scam.'\n   You want to screenshot your buy price and clap back. But you don't. Reborn discipline."
+    ]
+  },
+
+  "family_event": {
+    "cn": [
+      "💬 [系统] 家人需要你。而你需要做一个选择。\n   有些选择没有最优解，只有「你能接受的解」。",
+      "💬 [系统] 亲情和收益之间的选择题，标准答案栏写着「看你是什么人」。"
+    ],
+    "en": [
+      "💬 [System] Family needs you. And you need to make a choice.\n   Some choices don't have optimal solutions. Just ones you can live with.",
+      "💬 [System] Family vs. returns. The answer key says: 'Depends on who you are.'"
+    ]
+  },
+
+  "romance_event": {
+    "cn": [
+      "💬 [系统] 感情线触发。提醒：爱情不在你的金手指覆盖范围内。\n   这部分，你和普通人一样是个菜鸟。",
+      "💬 [系统] 有人喜欢你。这比BTC翻十倍还稀有。\n   珍惜？还是继续做你的孤独投资人？"
+    ],
+    "en": [
+      "💬 [System] Romance event triggered. Reminder: love is NOT covered by your cheat code.\n   In this department, you're as clueless as everyone else.",
+      "💬 [System] Someone likes you. That's rarer than a 10x BTC run.\n   Cherish it? Or keep being a lonely investor?"
+    ]
+  },
+
+  "year_end": {
+    "cn": [
+      "💬 [系统] 又一年过去了。你离2025年又近了一步。\n   时间在流逝，但至少你的资产没有。",
+      "💬 [系统] 年度结算完毕。有人欢喜有人忧。\n   你属于哪一种，看看你的数字就知道了。",
+      "💬 [系统] 这一年，你做了一些选择。有的明智，有的……嗯，有的很有「个性」。"
+    ],
+    "en": [
+      "💬 [System] Another year gone. One step closer to 2025.\n   Time is running out. But at least your assets aren't. Probably.",
+      "💬 [System] Year-end settlement complete. Some win, some learn.\n   Which one are you? Check your numbers.",
+      "💬 [System] This year, you made choices. Some wise. Some... 'creative.'"
+    ]
+  },
+
+  "ending_rich": {
+    "cn": [
+      "💬 [系统] 不错，重生者。你没有辜负金手指。\n   但你有没有想过——如果没有穿越，你会是什么样？\n   算了，不想也罢。反正你赢了。",
+      "💬 [系统] 恭喜通关。你的资产已经超越了99%的同龄人。\n   代价嘛……你自己心里有数。再来一次？"
+    ],
+    "en": [
+      "💬 [System] Not bad, reborn one. You made good use of the cheat code.\n   But have you ever wondered — what if you never traveled back?\n   Never mind. You won. That's what matters.",
+      "💬 [System] Congratulations. Your net worth exceeds 99% of your peers.\n   The price? You know. Play again?"
+    ]
+  },
+
+  "ending_poor": {
+    "cn": [
+      "💬 [系统] 你知道未来十年所有的答案，然后……亏了。\n   这需要一种特殊的天赋。恭喜解锁「小丑」成就。\n   再来一次？这次试试听系统的话？",
+      "💬 [系统] 重生者，你的成绩单有点……感人。\n   不过没关系，ReRun的意思就是「再来一次」。"
+    ],
+    "en": [
+      "💬 [System] You knew every answer for the next ten years and still... lost money.\n   That takes a special kind of talent. Achievement unlocked: 'The Clown.'\n   Try again? Maybe listen to the system this time?",
+      "💬 [System] Your report card is... touching.\n   But hey, ReRun means 'run it again.' That's the whole point."
+    ]
+  },
+
+  "ending_balanced": {
+    "cn": [
+      "💬 [系统] 你赚了一些钱，也保住了一些关系。\n   不是最好的结局，但也许是最真实的。\n   毕竟，人生不是K线图。",
+      "💬 [系统] 中规中矩的十年。有得有失，有笑有泪。\n   和大多数人的人生一样——只是你的银行卡多了几个零。"
+    ],
+    "en": [
+      "💬 [System] You made some money and kept some relationships.\n   Not the best ending, but maybe the most real one.\n   After all, life isn't a candlestick chart.",
+      "💬 [System] A balanced decade. Wins and losses, laughs and tears.\n   Just like most lives — except your bank account has a few more zeros."
+    ]
+  },
+
+  "achievement_unlock": {
+    "cn": [
+      "💬 [系统] 🏆 叮！成就解锁。看来你做了一些值得记住的事。",
+      "💬 [系统] 🏆 成就解锁！这个成就只有{percent}%的玩家获得过。你很特别。也许。"
+    ],
+    "en": [
+      "💬 [System] 🏆 Ding! Achievement unlocked. Looks like you did something worth remembering.",
+      "💬 [System] 🏆 Achievement unlocked! Only {percent}% of players have earned this one. You're special. Maybe."
+    ]
+  },
+
+  "stress_warning": {
+    "cn": [
+      "💬 [系统] ⚠️ 压力值过高。再这样下去，你可能会收到来自你身体的「强制平仓通知」。",
+      "💬 [系统] ⚠️ 你的压力值快爆了。建议：去跑步、冥想、或者关掉交易所APP。\n   什么？你说你做不到？……我理解。"
+    ],
+    "en": [
+      "💬 [System] ⚠️ Stress levels critical. Keep this up and your body might send a 'margin call.'",
+      "💬 [System] ⚠️ Stress is through the roof. Suggestion: go for a run, meditate, or close the exchange app.\n   What? You can't? ...I understand."
+    ]
+  },
+
+  "relationship_warning": {
+    "cn": [
+      "💬 [系统] ⚠️ 关系值过低。再不花点时间在家人/伴侣身上，你可能要解锁一些不太愉快的剧情了。",
+      "💬 [系统] ⚠️ 你已经很久没有关心身边的人了。BTC不会给你过生日。"
+    ],
+    "en": [
+      "💬 [System] ⚠️ Relationship level critical. Spend some time with your people, or unlock some... unpleasant storylines.",
+      "💬 [System] ⚠️ You haven't checked in with your loved ones in a while. BTC won't wish you happy birthday."
+    ]
+  }
+}

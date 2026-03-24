@@ -1,0 +1,170 @@
+{
+  "investment": [
+    {
+      "id": "diamond_hands",
+      "emoji": "💎",
+      "name": "钻石手",
+      "name_en": "Diamond Hands",
+      "description": "经历BTC暴跌超过50%没有卖出",
+      "description_en": "Held through a 50%+ BTC crash without selling",
+      "condition": "BTC价格从持有期间最高点下跌超过50%且btc_amount未减少",
+      "hidden": false
+    },
+    {
+      "id": "clown",
+      "emoji": "🤡",
+      "name": "小丑",
+      "name_en": "The Clown",
+      "description": "知道未来还亏钱了",
+      "description_en": "Knew the future and still lost money",
+      "condition": "最终net_worth低于初始savings",
+      "hidden": false
+    },
+    {
+      "id": "landlord",
+      "emoji": "🏦",
+      "name": "地主",
+      "name_en": "Landlord",
+      "description": "拥有3套以上房产",
+      "description_en": "Owned 3+ properties",
+      "condition": "properties >= 3",
+      "hidden": false
+    },
+    {
+      "id": "tenbagger",
+      "emoji": "📈",
+      "name": "十倍先生",
+      "name_en": "10x Man",
+      "description": "总资产相比起点翻了10倍",
+      "description_en": "Grew net worth 10x from starting point",
+      "condition": "net_worth >= initial_savings * 10",
+      "hidden": false
+    },
+    {
+      "id": "paper_hands",
+      "emoji": "💸",
+      "name": "纸手",
+      "name_en": "Paper Hands",
+      "description": "每次暴跌都卖了",
+      "description_en": "Sold every time BTC crashed",
+      "condition": "times_sold_btc >= 3 且在暴跌年份(2018/2022)都有卖出记录",
+      "hidden": false
+    },
+    {
+      "id": "bottom_fisher",
+      "emoji": "🎯",
+      "name": "精准抄底",
+      "name_en": "Bottom Fisher",
+      "description": "在BTC最低点附近买入",
+      "description_en": "Bought BTC near its lowest price",
+      "condition": "在2015年或2018年底或2022年底买入BTC",
+      "hidden": false
+    }
+  ],
+
+  "life": [
+    {
+      "id": "life_winner",
+      "emoji": "💕",
+      "name": "人生赢家",
+      "name_en": "Life Winner",
+      "description": "有钱、有伴侣、家庭关系好",
+      "description_en": "Rich, partnered, and great family relationships",
+      "condition": "net_worth > 5000000 且 has_partner 且 relationship > 70",
+      "hidden": false
+    },
+    {
+      "id": "heartbreaker",
+      "emoji": "💔",
+      "name": "渣男/渣女",
+      "name_en": "Heartbreaker",
+      "description": "分手2次以上",
+      "description_en": "Broke up 2+ times",
+      "condition": "breakups >= 2",
+      "hidden": false
+    },
+    {
+      "id": "zen_master",
+      "emoji": "🧘",
+      "name": "佛系",
+      "name_en": "Zen Master",
+      "description": "压力值全程没超过50",
+      "description_en": "Kept stress below 50 the entire game",
+      "condition": "stress历史最高值 < 50",
+      "hidden": false
+    },
+    {
+      "id": "regret",
+      "emoji": "😭",
+      "name": "意难平",
+      "name_en": "What Could Have Been",
+      "description": "最终资产还不如不穿越的基准线",
+      "description_en": "Ended up poorer than the no-rerun baseline",
+      "condition": "net_worth < 450000（不穿越基准线）",
+      "hidden": false
+    },
+    {
+      "id": "filial_child",
+      "emoji": "👪",
+      "name": "孝子",
+      "name_en": "Devoted Child",
+      "description": "每次家人有难都选择帮助",
+      "description_en": "Helped family every single time they needed it",
+      "condition": "所有family类事件都选择帮助选项 且 times_helped_family >= 2",
+      "hidden": false
+    },
+    {
+      "id": "lone_wolf",
+      "emoji": "🐺",
+      "name": "独狼",
+      "name_en": "Lone Wolf",
+      "description": "拒绝所有社交和感情选项",
+      "description_en": "Rejected every social and romance opportunity",
+      "condition": "has_partner == false 且 social < 30",
+      "hidden": false
+    }
+  ],
+
+  "hidden": [
+    {
+      "id": "prophet",
+      "emoji": "🌟",
+      "name": "先知",
+      "name_en": "The Prophet",
+      "description": "连续5次做出最优选择",
+      "description_en": "Made the optimal choice 5 times in a row",
+      "condition": "连续5个事件选择了收益最高的选项",
+      "hidden": true
+    },
+    {
+      "id": "storyteller",
+      "emoji": "🎪",
+      "name": "故事大王",
+      "name_en": "Story Collector",
+      "description": "一次run中触发了8种以上不同事件类型",
+      "description_en": "Triggered 8+ different event types in one run",
+      "condition": "choices_log中不同category >= 8",
+      "hidden": true
+    },
+    {
+      "id": "phoenix",
+      "emoji": "💀",
+      "name": "破产重生",
+      "name_en": "Phoenix",
+      "description": "资产归零后又东山再起",
+      "description_en": "Went broke and came back from nothing",
+      "condition": "某年net_worth < 10000 且最终 net_worth > 1000000",
+      "hidden": true
+    },
+    {
+      "id": "exposed",
+      "emoji": "🔮",
+      "name": "穿越者暴露",
+      "name_en": "Cover Blown",
+      "description": "因为操作太神了被NPC怀疑你是穿越者",
+      "description_en": "Actions were so perfect that NPCs suspected time travel",
+      "condition": "reputation > 90 且连续3次最优决策",
+      "hidden": true
+    }
+  ]
+}

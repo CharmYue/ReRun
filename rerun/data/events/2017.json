@@ -1,0 +1,286 @@
+{
+  "year": 2017,
+  "positive": [
+    {
+      "id": "2017_btc_moon",
+      "title": "BTC起飞了！",
+      "gender": "both",
+      "description_template": "BTC从年初的7000涨到了13万！\n\n你的手机被各种消息轰炸：\n「你之前说的那个比特币，真的涨了？」\n「教教我怎么买！」\n「你是不是早就买了？赚了多少？」\n\n你微微一笑，没有回复。",
+      "variables": {},
+      "choices": [
+        {
+          "key": "A",
+          "text": "低调，谁问都说「没买多少」",
+          "hint": "💬 [系统] 闷声发大财，重生者的基本素养。",
+          "consequences": { "stress": -10, "social": 5 },
+          "narrative": "你在朋友圈看着大家讨论BTC，一条评论都没发。你知道，真正赚钱的人从不声张。"
+        },
+        {
+          "key": "B",
+          "text": "适当分享一些投资经验",
+          "hint": "💬 [系统] 小心。分享太多会暴露你的仓位。",
+          "consequences": { "social": 15, "reputation": 10, "stress": 5, "network": 1 },
+          "narrative": "你在几个朋友的追问下，分享了一些「入门知识」。突然之间你成了朋友圈里的「投资大神」。"
+        },
+        {
+          "key": "C",
+          "text": "趁机卖出一部分落袋为安",
+          "hint": "💬 [系统] 2018年会暴跌到2.5万。现在卖是聪明的。但你能忍住不贪吗？",
+          "consequences": { "stress": -5 },
+          "narrative": "你卖出了一部分BTC，存款瞬间多了一大笔。拿着实实在在的钱，心安了不少。"
+        }
+      ],
+      "weight": 1.5
+    },
+    {
+      "id": "2017_college_reunion",
+      "title": "大学同学聚会",
+      "gender": "both",
+      "description_template": "大学同学{organizer}组织了一场聚会。\n\n{count}个人到了，大家聊工作、聊感情、聊房子。有人混得风生水起，有人还在迷茫。\n\n轮到你的时候，所有人看着你：「你最近在干嘛？」",
+      "variables": {
+        "organizer": ["班长老吴", "团支书小刘", "社交达人阿明"],
+        "count": [12, 15, 20]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "「就上班呗，没什么特别的」",
+          "hint": "💬 [系统] 你的BTC账户够买下整桌人的年薪。但你选择低调。",
+          "consequences": { "social": 10, "stress": -5 },
+          "narrative": "没人多问。饭桌上的焦点很快转移到了谁谁买了房。你安静地吃菜，偶尔笑笑。这种从容，只有重生者才懂。"
+        },
+        {
+          "key": "B",
+          "text": "暗示自己在做投资，小赚了一笔",
+          "hint": "💬 [系统] 虚荣心蠢蠢欲动。克制，克制。",
+          "consequences": { "social": 15, "reputation": 10, "stress": 10 },
+          "narrative": "几个同学来了兴趣：「什么投资？带带我呗！」你赶紧岔开话题。说得太多了。"
+        }
+      ],
+      "weight": 1.0
+    },
+    {
+      "id": "2017_friend_wedding",
+      "title": "好朋友结婚了",
+      "gender": "both",
+      "description_template": "好朋友{name}要结婚了！邀请你参加婚礼。\n\n份子钱{gift}起步。你看着喜帖上的大红色「囍」字，为TA高兴。",
+      "variables": {
+        "name": ["大学室友阿军", "高中好友小洁", "公司同事老马"],
+        "gift": [1000, 2000, 3000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "包个大红包，衷心祝福",
+          "hint": "💬 [系统] 份子钱是社交投资。以后你结婚时会收回来的。如果你结婚的话。",
+          "consequences": { "savings": -1, "social": 10, "stress": -5 },
+          "narrative": "婚礼上你喝了不少，和一桌老朋友聊了很久。{name}敬酒到你这桌时，红着脸说「谢谢你来」。"
+        },
+        {
+          "key": "B",
+          "text": "包个正常数，礼到心意到",
+          "hint": "💬 [系统] 合理。不失礼也不浪费。",
+          "consequences": { "savings": -1000, "social": 5, "stress": -3 },
+          "narrative": "婚礼挺热闹的。你拍了些照片发朋友圈，配文「百年好合」。"
+        }
+      ],
+      "weight": 0.8
+    },
+    {
+      "id": "2017_bonus_surprise",
+      "title": "公司发了意外奖金",
+      "gender": "both",
+      "description_template": "公司今年效益特别好，老板大手一挥发了{bonus}的项目奖金！\n\n群里都在发表情包庆祝。",
+      "variables": {
+        "bonus": [10000, 15000, 20000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "直接买BTC，一分不留",
+          "hint": "💬 [系统] 此刻BTC还在涨。你的判断没错。",
+          "consequences": { "stress": 5 },
+          "narrative": "奖金到账的当天就变成了BTC。你看着持仓数量又涨了一点，满意地点点头。"
+        },
+        {
+          "key": "B",
+          "text": "存着，保持现金流",
+          "hint": "💬 [系统] 手有余粮，心中不慌。",
+          "consequences": { "savings": 1, "stress": -5 },
+          "narrative": "奖金乖乖躺进了银行卡。安全感这东西，有时候比收益率更重要。"
+        }
+      ],
+      "weight": 0.9
+    }
+  ],
+  "negative": [
+    {
+      "id": "2017_ico_fomo",
+      "title": "ICO的诱惑",
+      "gender": "both",
+      "description_template": "ICO遍地开花。你认识的{person}投了一个叫「{coin_name}」的项目，号称{claim}。\n\nTA上个月投了{invested}万，现在已经翻了{multiplier}倍。\n\n「你也来啊！这个绝对稳！」",
+      "variables": {
+        "person": ["同事的朋友", "大学同学", "隔壁部门的哥们"],
+        "coin_name": ["星链币", "元宇宙Token", "量子链"],
+        "claim": ["去中心化社交平台", "区块链+物联网", "下一个以太坊"],
+        "invested": [2, 5, 10],
+        "multiplier": [3, 5, 10]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "坚决不碰，ICO十个九个骗",
+          "hint": "💬 [系统] 你知道九四禁令马上要来了。这些空气币都会归零。清醒！",
+          "consequences": { "stress": -5, "social": -5 },
+          "narrative": "你顶住了诱惑。{person}觉得你胆子小。但等到ICO全面暴雷的时候，TA会理解你的。"
+        },
+        {
+          "key": "B",
+          "text": "小投一点，万一呢",
+          "hint": "💬 [系统] 万一？你是重生者啊！你明明知道这些都是空气！……但人性就是这样。",
+          "consequences": { "savings": -10000, "stress": 15 },
+          "narrative": "你忍不住投了一点。过了两个月，九四禁令一出，这些币全部归零。你不心疼钱，心疼的是自己居然犯了这种低级错误。"
+        },
+        {
+          "key": "C",
+          "text": "投了，还投不少",
+          "hint": "💬 [系统] ……你是认真的吗？重生者之耻。",
+          "consequences": { "savings": -50000, "stress": 30 },
+          "narrative": "贪婪战胜了理性。当九四禁令来临时，你损失惨重。重生的知识在贪婪面前不堪一击。这是一个教训。"
+        }
+      ],
+      "weight": 1.2
+    },
+    {
+      "id": "2017_nine_four_ban",
+      "title": "九四禁令：BTC暴跌40%",
+      "gender": "both",
+      "description_template": "中国政府全面禁止ICO，关闭境内交易所！\n\nBTC一天内暴跌40%。你的持仓市值蒸发了一大截。\n\n朋友圈一片哀嚎。有人割肉，有人跳楼。你的手在发抖，但你的脑子很清醒。\n\n你知道，年底会创新高。但此刻的恐惧是真实的。",
+      "variables": {},
+      "choices": [
+        {
+          "key": "A",
+          "text": "稳如泰山，一个币都不卖",
+          "hint": "💬 [系统] 你知道年底BTC会到13万。这只是洗盘。Hold住。",
+          "consequences": { "stress": 20 },
+          "narrative": "你把交易所APP删了一周。不看不想不纠结。一周后打开——涨回来了。你长舒一口气。"
+        },
+        {
+          "key": "B",
+          "text": "恐慌卖出一部分",
+          "hint": "💬 [系统] 你明明知道会涨回来……但恐惧这东西不讲道理。",
+          "consequences": { "stress": 25 },
+          "narrative": "你在恐慌中卖出了一些。等到价格涨回来，你肠子都悔青了。知识抵不过情绪。"
+        },
+        {
+          "key": "C",
+          "text": "趁暴跌加仓！",
+          "hint": "💬 [系统] 别人恐惧我贪婪。你是在践行巴菲特，还是在利用开挂？管它呢。",
+          "consequences": { "stress": 15 },
+          "narrative": "你在最恐慌的时候加仓了。两个月后，你的这笔抄底翻了倍。你默默给自己竖了个大拇指。"
+        }
+      ],
+      "weight": 1.0
+    }
+  ],
+  "opportunity": [
+    {
+      "id": "2017_sell_btc_high",
+      "title": "BTC到顶了，要卖吗？",
+      "gender": "both",
+      "description_template": "BTC突破13万。你的持仓收益率已经超过{return_pct}%了。\n\n贪婪在耳边低语：「也许还能涨……」\n理性在另一边说：「你知道2018年会暴跌到2.5万。」\n\n你该怎么办？",
+      "variables": {
+        "return_pct": [500, 1000, 2000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "卖出大部分，只留一点底仓",
+          "hint": "💬 [系统] 落袋为安。2018年的惨跌你记忆犹新。聪明人在别人疯狂的时候离场。",
+          "consequences": { "stress": -15 },
+          "narrative": "你在高位卖出了大部分BTC。看着银行账户上的数字，你终于感到了真实的安全感。纸面富贵变成了真金白银。"
+        },
+        {
+          "key": "B",
+          "text": "再等等，也许能更高",
+          "hint": "💬 [系统] 你知道不会更高了……但万一这次历史不一样呢？不，你是重生者。别犯傻。",
+          "consequences": { "stress": 20 },
+          "narrative": "你选择了等待。BTC又涨了一点，然后开始下跌。你安慰自己：没关系，2021年还有一轮。"
+        },
+        {
+          "key": "C",
+          "text": "全部卖出，彻底落袋",
+          "hint": "💬 [系统] 激进但聪明。2018年暴跌之后你可以在底部全部接回来。",
+          "consequences": { "stress": -20 },
+          "narrative": "你清仓了。账户余额让你感觉像是做了一场梦。但这不是梦，这是你应得的。"
+        }
+      ],
+      "weight": 1.3
+    },
+    {
+      "id": "2017_friend_startup_ai",
+      "title": "朋友在做AI项目",
+      "gender": "both",
+      "description_template": "大学同学{name}找到你。TA从{company}出来创业了，做AI{field}。\n\n团队{team_size}个人，{background}。天使轮估值{valuation}万，TA让你投{amount}万。",
+      "variables": {
+        "name": ["张磊", "李华", "王鑫"],
+        "company": ["百度", "阿里", "腾讯"],
+        "field": ["语音识别", "图像处理", "自然语言处理"],
+        "team_size": [4, 6, 8],
+        "background": ["核心成员都是985博士", "有两个前Google的工程师", "CTO是业内知名大牛"],
+        "valuation": [500, 800, 1200],
+        "amount": [5, 10, 20]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "投了！AI是未来的大方向",
+          "hint": "💬 [系统] 你知道AI大趋势没错。但这一家能不能活到2023年，你不确定。",
+          "consequences": { "savings": -1, "social": 10, "stress": 10, "investment_iq": 1 },
+          "narrative": "你投了。{name}很高兴，拉你进了股东群。你看着群里每周的进展汇报，心想：希望你们能撑到GPT那一天。"
+        },
+        {
+          "key": "B",
+          "text": "不投钱，但可以帮忙推荐资源",
+          "hint": "💬 [系统] 不花钱还能交情，聪明。",
+          "consequences": { "social": 5, "stress": -5 },
+          "narrative": "你帮{name}介绍了一些行业资源。TA很感激。你们的关系更近了。"
+        },
+        {
+          "key": "C",
+          "text": "算了，创业风险太大",
+          "hint": "💬 [系统] 保守但不一定错。创业公司九死一生。",
+          "consequences": { "stress": -5 },
+          "narrative": "你婉拒了。{name}有点失望但理解。"
+        }
+      ],
+      "weight": 0.8
+    }
+  ],
+  "milestone": [
+    {
+      "id": "2017_millionaire",
+      "title": "百万富翁！",
+      "check": "net_worth_gt_1000000",
+      "description_template": "你打开手机计算了一下自己的总资产——\n\n超过一百万了！！！\n\n在这个年纪，你已经跑赢了绝大多数同龄人。\n但你知道，这只是开始。",
+      "variables": {},
+      "choices": [
+        {
+          "key": "A",
+          "text": "允许自己高兴一下",
+          "hint": "💬 [系统] 🎉 恭喜！你比全国92%的同龄人有钱了。\n当然，在北上深，这也就够一套厕所。",
+          "consequences": { "stress": -15 },
+          "narrative": "你独自在家打开了一罐啤酒。没有烟花，没有掌声。但你知道自己做到了。这种安静的成就感，比任何庆祝都好。"
+        },
+        {
+          "key": "B",
+          "text": "不够，目标是一个亿",
+          "hint": "💬 [系统] 野心勃勃。重生一次不赚个亿，确实有点浪费。",
+          "consequences": { "stress": 5 },
+          "narrative": "你关掉了计算器。一百万？还差得远。你的目光投向了更远的地方。"
+        }
+      ],
+      "weight": 1.0
+    }
+  ]
+}

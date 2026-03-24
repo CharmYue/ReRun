@@ -23,6 +23,7 @@ def run_game(settings: Settings) -> None:
     """Start the ReRun game loop."""
     from rerun.engine.choices import get_valid_keys
     from rerun.engine.game import GameEngine
+    from rerun.engine.state import Gender
     from rerun.ui.renderer import GameRenderer
     from rerun.ui.screens import get_ending_narrator, get_year_end_narrator, render_opening
 
@@ -31,17 +32,32 @@ def run_game(settings: Settings) -> None:
     lang = settings.game_language.value
 
     while True:
-        # --- Opening ---
-        preset = render_opening(renderer)
-        engine.init_player(preset)
+        # --- Opening (returns preset + gender) ---
+        preset, gender_str = render_opening(renderer)
+        gender = Gender.FEMALE if gender_str == "female" else Gender.MALE
+        engine.init_player(preset, gender)
 
         # --- Year loop ---
+        prev_state = None
+        bankrupt_restart = False
         while not engine.is_game_over():
-            # Year start
+            # Year start (画面1 + 画面2, with press-enter paging)
             ys = engine.get_year_start()
-            renderer.render_year_start(ys)
+            renderer.render_year_start(ys, prev_state=prev_state)
 
-            # Events
+            # Prophet feedback — reward past foresight
+            prophet_msg = engine.check_prophet()
+            if prophet_msg:
+                console.print(prophet_msg)
+                console.print()
+
+            # Milestone celebration
+            milestone_msg = engine.check_milestone()
+            if milestone_msg:
+                console.print(milestone_msg)
+                console.print()
+
+            # Events (画面3: event + choices → 画面4: result)
             events = engine.get_events_for_year()
             for event in events:
                 renderer.render_event(event)
@@ -50,17 +66,42 @@ def run_game(settings: Settings) -> None:
                 valid = get_valid_keys(event)
                 choice_key = renderer.prompt_choice(valid)
 
-                # Process and display result
+                # Process and display result (画面4)
                 result = engine.apply_choice(event, choice_key)
                 renderer.render_choice_result(result)
+
+                # Check milestone after each choice (state may have changed)
+                milestone_msg = engine.check_milestone()
+                if milestone_msg:
+                    console.print(milestone_msg)
+                    console.print()
 
             # Year-end
             narrator_line = get_year_end_narrator(engine.state.year, lang)
             if narrator_line:
                 console.print(f"  [cyan italic]{narrator_line}[/]")
 
-            year_end = engine.settle_year()
+            prev_state = engine.state
+            year_end = engine.settle_year(year_events=events)
             renderer.render_year_end(year_end.year, year_end.state)
+
+            # Bankruptcy check
+            if engine.is_bankrupt():
+                action = renderer.render_bankruptcy(engine.state)
+                if action == "R":
+                    engine.apply_bankruptcy_continue()
+                    continue  # continue year loop with new low-income state
+                elif action == "N":
+                    bankrupt_restart = True
+                    break  # break year loop → will restart via outer loop
+                else:
+                    console.print("\n  [dim]感谢游玩 ReRun。再见。[/]\n")
+                    return  # exit entirely
+
+        # Skip ending if restarting from bankruptcy
+        if bankrupt_restart:
+            engine.reset()
+            continue
 
         # --- Ending ---
         ending = engine.get_ending()

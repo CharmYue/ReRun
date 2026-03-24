@@ -1,0 +1,259 @@
+{
+  "year": 2018,
+  "positive": [
+    {
+      "id": "2018_layoff_blessing",
+      "title": "塞翁失马：被裁了",
+      "gender": "both",
+      "description_template": "公司缩编，你的部门被裁了{count}个人——你在名单上。\n\nHR递过来N+1的赔偿协议，金额{compensation}。你签了字，走出大楼，深吸一口气。\n\n阳光很好。你突然觉得……好像也没那么糟？",
+      "variables": {
+        "count": [5, 8, 12],
+        "compensation": ["三个月工资", "五个月工资加年假补偿", "半年工资"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "正好！gap半年，好好学点东西",
+          "hint": "💬 [系统] 你知道2019年行情会回暖。这半年是黄金充电期。",
+          "consequences": { "stress": -20, "savings": 30000, "is_employed": false },
+          "narrative": "你给自己放了个长假。每天早起看书、学技术、锻炼身体。朋友们还在996的时候，你已经把下一个风口的技术栈学完了。被裁？这是上天给重生者的礼物。"
+        },
+        {
+          "key": "B",
+          "text": "赶紧找下家，不能断档",
+          "hint": "💬 [系统] 2018年就业市场不太好。但你的能力不差。",
+          "consequences": { "stress": 15, "savings": 10000 },
+          "narrative": "你在两周内就拿到了offer。新公司给的薪资还涨了15%。前同事们纷纷投来羡慕的目光。裁员？不过是换个地方上班罢了。"
+        },
+        {
+          "key": "C",
+          "text": "拿了赔偿金去旅行散心",
+          "hint": "💬 [系统] 用裁员赔偿金去旅行……有点奢侈但谁规定打工人不配呢。",
+          "consequences": { "stress": -25, "savings": -15000, "is_employed": false },
+          "narrative": "你去了东南亚待了一个月。在清迈的咖啡馆里对着夕阳发呆时，你想：人生就该这样。等回来再卷不迟。"
+        }
+      ],
+      "weight": 0.9
+    },
+    {
+      "id": "2018_friend_repay",
+      "title": "朋友终于还钱了！",
+      "gender": "both",
+      "description_template": "你差点忘了——{friend}去年借了你{amount}块钱。\n\n今天突然微信转账过来了！还多了{extra}块，说是「利息」。\n\n你盯着手机屏幕，感动得差点落泪。这年头，主动还钱的人比BTC还稀有。",
+      "variables": {
+        "friend": ["大学室友老周", "高中铁哥们小陈", "前同事阿丽"],
+        "amount": [5000, 10000, 20000],
+        "extra": [200, 500, 1000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "收下，然后请TA吃顿好的",
+          "hint": "💬 [系统] 诚信值得奖励。这种朋友要好好珍惜。",
+          "consequences": { "savings": 1, "social": 10, "stress": -10 },
+          "narrative": "你们去吃了一顿火锅。席间聊了很多。{friend}说最近工作稳定了，攒了点钱第一件事就是还你。你举起杯：「够义气。」"
+        },
+        {
+          "key": "B",
+          "text": "多出来的「利息」退回去",
+          "hint": "💬 [系统] 大气。朋友之间不在乎这点小钱。",
+          "consequences": { "savings": 1, "social": 15, "stress": -8 },
+          "narrative": "你把多出来的部分退了回去，说「别这样，咱俩谁跟谁」。{friend}发了一串感动的表情包。"
+        }
+      ],
+      "weight": 0.7
+    },
+    {
+      "id": "2018_new_skill",
+      "title": "解锁新技能！",
+      "gender": "both",
+      "description_template": "熊市漫漫，闲着也是闲着。你决定学{skill}。\n\n报了个{course_type}的课程，花了{cost}块。每天下班后雷打不动学两小时。\n\n三个月后，你居然真的学会了。",
+      "variables": {
+        "skill": ["Python编程", "数据分析", "区块链开发"],
+        "course_type": ["网上", "线下培训班", "B站免费"],
+        "cost": [0, 3000, 8000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "继续深入学，争取转行",
+          "hint": "💬 [系统] 2019-2020年这个技能会很值钱。你在为未来投资。",
+          "consequences": { "savings": -1, "stress": 5, "reputation": 10, "investment_iq": 1 },
+          "narrative": "你把所有空闲时间都花在学习上。当别人在刷抖音的时候，你在写代码。这种枯燥的日子，只有知道结局的人才能坚持。"
+        },
+        {
+          "key": "B",
+          "text": "学到够用就行，先拿来做个副业",
+          "hint": "💬 [系统] 实用主义。学以致用，不浪费。",
+          "consequences": { "savings": 5000, "stress": -5, "reputation": 5 },
+          "narrative": "你接了几个小活儿，用新学的技能赚了点零花钱。虽然不多，但那种「技多不压身」的感觉真好。"
+        }
+      ],
+      "weight": 1.0
+    }
+  ],
+  "negative": [
+    {
+      "id": "2018_btc_crash_pressure",
+      "title": "BTC暴跌：从13万到2.5万",
+      "gender": "both",
+      "description_template": "BTC从年初的13万一路暴跌。\n\n{month}月的时候跌到了{price}。你的手机每天推送都是红色的。\n\n如果你还持有BTC，每天都是一场心理折磨。\n如果你在去年高点卖了，此刻你正在窃喜。\n\n但不管怎样，身边人对你的态度变了：「你不是说BTC能涨吗？」",
+      "variables": {
+        "month": [3, 6, 9],
+        "price": ["60000", "45000", "30000"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "无视噪音，该干嘛干嘛",
+          "hint": "💬 [系统] 你知道2020-2021年会大涨。现在的嘲笑都是将来的打脸素材。",
+          "consequences": { "stress": 15, "social": -5 },
+          "narrative": "你把所有关于BTC的群都设了免打扰。别人笑你「韭菜」的时候你笑笑不说话。三年后再看，谁是韭菜一目了然。"
+        },
+        {
+          "key": "B",
+          "text": "受不了了，割肉卖出",
+          "hint": "💬 [系统] 你真的要在底部卖出？重生者之耻，第二弹。",
+          "consequences": { "stress": 30, "social": -5 },
+          "narrative": "你扛不住压力卖了。看着清空的账户，你知道自己犯了大错。知道未来又怎样？人性的弱点不会因为重生就消失。"
+        },
+        {
+          "key": "C",
+          "text": "反向操作：加仓抄底",
+          "hint": "💬 [系统] 在所有人恐惧的时候贪婪。重生者的超级副本。",
+          "consequences": { "stress": 10 },
+          "narrative": "你在别人割肉的时候默默加仓。每跌一波你就买一点。这需要极大的心理素质——即使你知道未来。"
+        }
+      ],
+      "weight": 1.5
+    },
+    {
+      "id": "2018_p2p_explosion",
+      "title": "P2P暴雷！亲戚血本无归",
+      "gender": "both",
+      "description_template": "P2P大面积暴雷！{relative}投在{platform}的{amount}万全没了！\n\nTA打电话过来哭诉。说当时是听了{recommender}的推荐才投的。现在维权无门，报警也没用。\n\n「你不是搞投资的吗？你帮我想想办法！」",
+      "variables": {
+        "relative": ["舅舅", "表姐", "爸妈的老朋友"],
+        "platform": ["某某贷", "信X财富", "钱X宝"],
+        "amount": [10, 30, 50],
+        "recommender": ["银行的理财经理", "小区群里的人", "同事"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "帮忙出主意，但明确说钱大概率回不来了",
+          "hint": "💬 [系统] 实话实说。P2P暴雷的钱基本就是打水漂了。",
+          "consequences": { "stress": 20, "social": -5, "times_helped_family": 1 },
+          "narrative": "你陪{relative}梳理了情况。说实话：这钱大概率是要不回来了。{relative}沉默了很久。你心里也不好受。"
+        },
+        {
+          "key": "B",
+          "text": "借一些钱给TA渡过难关",
+          "hint": "💬 [系统] 善良。但借出去的钱，做好回不来的准备。",
+          "consequences": { "savings": -30000, "stress": 15, "social": 10, "times_helped_family": 1 },
+          "narrative": "你转了一些钱过去。{relative}感激涕零。你说「不急，慢慢来」。虽然心疼，但这是家人。"
+        },
+        {
+          "key": "C",
+          "text": "「我早说过不要投P2P！」",
+          "hint": "💬 [系统] 事后诸葛亮。正确但没用，还伤感情。",
+          "consequences": { "stress": 10, "social": -15 },
+          "narrative": "你忍不住说了句「我之前提醒过的」。电话那头沉默了。你知道说了不该说的话。{relative}从此和你保持了距离。"
+        }
+      ],
+      "weight": 1.2
+    }
+  ],
+  "opportunity": [
+    {
+      "id": "2018_btc_bottom_buy",
+      "title": "BTC跌到谷底：抄底时机？",
+      "gender": "both",
+      "description_template": "BTC跌到了{price}。你翻了翻钱包，还有{available}可以用。\n\n新闻里都在说「比特币已死」、「泡沫破裂」。你的同事提到BTC就摇头。\n\n但你知道——2021年，这玩意儿要涨到30万。\n\n此刻每一分钱投进去，都是三年后的{multiplier}倍。",
+      "variables": {
+        "price": ["25000", "30000", "28000"],
+        "available": ["50000闲钱", "100000存款", "一笔年终奖"],
+        "multiplier": [10, 8, 12]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "All in！这是一生一次的机会",
+          "hint": "💬 [系统] 2.5万买入，30万卖出。12倍。你这是在用上帝视角赚钱。",
+          "consequences": { "savings": -1, "stress": 15 },
+          "narrative": "你把能用的钱都换成了BTC。点击「买入」的那一刻手都在抖——不是因为害怕，是因为兴奋。你知道自己在做什么。"
+        },
+        {
+          "key": "B",
+          "text": "分批买入，慢慢建仓",
+          "hint": "💬 [系统] 稳健。虽然你知道底部在哪，但分批买入能让你睡好觉。",
+          "consequences": { "savings": -1, "stress": 5 },
+          "narrative": "你制定了一个计划：每个月定投一笔。不急，三年的时间够了。这种从容，来自对未来的确定。"
+        },
+        {
+          "key": "C",
+          "text": "算了，跌怕了，先观望",
+          "hint": "💬 [系统] ……你重生回来就是为了「观望」的？",
+          "consequences": { "stress": 5 },
+          "narrative": "你告诉自己再等等。结果等着等着，价格从2.5万涨到了6万。你又犹豫了。重生者最大的敌人不是别人，是自己。"
+        }
+      ],
+      "weight": 1.5
+    },
+    {
+      "id": "2018_career_change",
+      "title": "转行的十字路口",
+      "gender": "both",
+      "description_template": "一个猎头打来电话，说{company}在招{position}，年薪{salary}万。\n\n这个方向和你现在做的完全不同。但你知道——{reason}。\n\n「有兴趣聊聊吗？」",
+      "variables": {
+        "company": ["一家AI创业公司", "某大厂的新业务线", "一家跨境电商"],
+        "position": ["数据分析师", "产品经理", "技术负责人"],
+        "salary": [30, 40, 50],
+        "reason": ["AI行业三年后会爆发", "这个赛道两年后会起飞", "跨境电商的红利期马上来了"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "去！现在不跳更待何时",
+          "hint": "💬 [系统] 利用重生知识布局职业赛道。这波操作教科书级别。",
+          "consequences": { "stress": 10, "monthly_salary": 5000, "reputation": 10, "career_level": 1 },
+          "narrative": "你跳了。新公司的节奏快得多，但你学到了很多。更重要的是——你知道这个赛道的未来。当别人还在犹豫的时候，你已经上了牌桌。"
+        },
+        {
+          "key": "B",
+          "text": "先不动，等时机更成熟",
+          "hint": "💬 [系统] 稳一手。2018年大环境不好，跳槽有风险。",
+          "consequences": { "stress": -5 },
+          "narrative": "你婉拒了猎头。也许明年，也许后年。你不急。反正你知道哪条路通向金矿。"
+        }
+      ],
+      "weight": 0.8
+    }
+  ],
+  "milestone": [
+    {
+      "id": "2018_half_million_savings",
+      "title": "存款突破50万！",
+      "check": "savings_gt_500000",
+      "description_template": "你打开银行APP，看着余额——\n\n50万。整整齐齐。\n\n在这个BTC暴跌、P2P暴雷、裁员潮涌的2018年，你的存款不减反增。\n\n这说明什么？说明你是一个有纪律的重生者。",
+      "variables": {},
+      "choices": [
+        {
+          "key": "A",
+          "text": "50万不多，但它是安全感",
+          "hint": "💬 [系统] 在2018年能存住50万的年轻人，全国不超过5%。你是其中之一。",
+          "consequences": { "stress": -20 },
+          "narrative": "你没有庆祝。50万在一线城市连个首付都不够。但你知道这些钱很快就会变成更多。耐心。"
+        },
+        {
+          "key": "B",
+          "text": "是时候做更大胆的投资了",
+          "hint": "💬 [系统] 有了安全垫，就可以放手一搏了。",
+          "consequences": { "stress": 5 },
+          "narrative": "你开始规划下一步。BTC在底部、房产即将调控、2020年有黑天鹅……棋盘上的每一步你都了然于胸。"
+        }
+      ],
+      "weight": 1.0
+    }
+  ]
+}

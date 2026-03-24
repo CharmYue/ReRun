@@ -1,0 +1,321 @@
+{
+  "year": 2019,
+  "positive": [
+    {
+      "id": "2019_new_hobby",
+      "title": "发现了新爱好",
+      "gender": "both",
+      "description_template": "百无聊赖的一个周末，你被{friend}拉去体验了{hobby}。\n\n没想到——你居然上瘾了！\n\n接下来的三个月，你每个周末都泡在{place}里。花了{cost}块买装备，但快乐是无价的。",
+      "variables": {
+        "friend": ["同事小李", "大学室友阿文", "网上认识的驴友"],
+        "hobby": ["攀岩", "咖啡手冲", "摄影"],
+        "place": ["岩馆", "咖啡店", "城市各个角落"],
+        "cost": [3000, 5000, 8000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "继续玩！生活需要点调剂",
+          "hint": "💬 [系统] 重生者也需要生活啊。不能天天盯盘。",
+          "consequences": { "savings": -1, "stress": -20, "social": 10 },
+          "narrative": "你在{hobby}圈子里交到了一群新朋友。这些人不聊股票不聊房子，只聊怎么把这件事做得更好。久违的纯粹快乐。"
+        },
+        {
+          "key": "B",
+          "text": "有意思，但不能花太多时间",
+          "hint": "💬 [系统] 自制力。重生者的时间表很紧凑。",
+          "consequences": { "savings": -1000, "stress": -10 },
+          "narrative": "你偶尔玩玩，保持在「爱好」而不是「沉迷」的程度。重生者的每一天都很珍贵，不能浪费。"
+        }
+      ],
+      "weight": 0.8
+    },
+    {
+      "id": "2019_travel_experience",
+      "title": "一场说走就走的旅行",
+      "gender": "both",
+      "description_template": "趁着{holiday}假期，你买了飞往{destination}的机票。\n\n{travel_detail}\n\n在异国他乡的夜晚，你望着{scene}，突然觉得——重生一次，不只是为了赚钱。",
+      "variables": {
+        "holiday": ["五一", "十一", "年假"],
+        "destination": ["日本京都", "泰国清迈", "新西兰"],
+        "travel_detail": ["一个人，背着包，走街串巷", "和几个朋友自驾，笑声一路", "跟了个小团，轻松自在"],
+        "scene": ["鸭川的流水", "夜市的灯火", "南半球的星空"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "把美好的记忆收藏起来，继续赶路",
+          "hint": "💬 [系统] 旅行是充电，不是逃避。回来继续搞钱。",
+          "consequences": { "savings": -15000, "stress": -25 },
+          "narrative": "你带着相机里满满的照片回到了日常。这些回忆在未来疲惫的时刻，会成为支撑你的力量。"
+        },
+        {
+          "key": "B",
+          "text": "旅行中认识了一些有趣的人",
+          "hint": "💬 [系统] 缘分这东西，有时候比K线图更不可预测。",
+          "consequences": { "savings": -10000, "stress": -20, "social": 15 },
+          "narrative": "你在旅途中认识了{friend_met}。加了微信，回来后偶尔聊聊。世界很大，好的缘分就在路上。"
+        }
+      ],
+      "variables_extra": {
+        "friend_met": ["一个做自由职业的设计师", "一个同样独自旅行的程序员", "一群超有趣的背包客"]
+      },
+      "weight": 0.7
+    },
+    {
+      "id": "2019_salary_raise",
+      "title": "涨薪了！",
+      "gender": "both",
+      "description_template": "年度绩效评估结果出来了：{rating}！\n\n领导找你谈话，说公司决定给你涨薪{raise_pct}%。月薪从{old_salary}涨到了{new_salary}。\n\n你面带微笑地说了声谢谢。心里想的是：这也就比BTC的年化收益率高了那么……等等，好像还不如。",
+      "variables": {
+        "rating": ["S级", "A+", "优秀"],
+        "raise_pct": [15, 20, 30],
+        "old_salary": [15000, 20000, 25000],
+        "new_salary": [17000, 24000, 32000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "开心，但不膨胀。多出来的全存起来",
+          "hint": "💬 [系统] 工资涨了但消费不涨。储蓄率up。这是复利的秘密。",
+          "consequences": { "monthly_salary": 5000, "stress": -10, "career_level": 1 },
+          "narrative": "你调整了自动转账的金额。涨薪的钱直接进入存钱账户。你的生活方式一点没变。同事说你抠，你笑笑不回应。"
+        },
+        {
+          "key": "B",
+          "text": "涨薪嘛，适当改善一下生活",
+          "hint": "💬 [系统] 升级个设备、换个好点的住处？别让消费升级吃掉涨幅就好。",
+          "consequences": { "monthly_salary": 5000, "monthly_expense": 2000, "stress": -15 },
+          "narrative": "你搬到了一个离公司更近、采光更好的房子。每天多睡半小时的感觉，真的很值。"
+        }
+      ],
+      "weight": 1.0
+    },
+    {
+      "id": "2019_btc_recovery",
+      "title": "BTC回暖：阳光穿透了乌云",
+      "gender": "both",
+      "description_template": "BTC从年初的25000涨到了{price}！\n\n经历了一整年的寒冬之后，行情终于开始回暖了。如果你在去年底部抄了底，此刻收益率已经超过{return_pct}%。\n\n但你知道，这才刚刚开始。真正的大戏在2021年。",
+      "variables": {
+        "price": [60000, 70000, 80000],
+        "return_pct": [100, 150, 200]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "按兵不动，这才哪到哪",
+          "hint": "💬 [系统] 30万的目标还远着呢。耐心，耐心，耐心。",
+          "consequences": { "stress": -10 },
+          "narrative": "你看着K线图缓缓上扬，心如止水。别人在庆祝「解套」的时候，你在想的是三年后的财务自由。格局。"
+        },
+        {
+          "key": "B",
+          "text": "小卖一点，回收一些本金",
+          "hint": "💬 [系统] 回收本金不是坏事。用利润继续持有，心态更稳。",
+          "consequences": { "savings": 30000, "stress": -15 },
+          "narrative": "你卖出了一小部分，把本金收回来。剩下的全是利润。这种「零成本持仓」的感觉，稳如泰山。"
+        }
+      ],
+      "weight": 0.9
+    }
+  ],
+  "negative": [
+    {
+      "id": "2019_marriage_pressure_male",
+      "title": "催婚：妈妈的夺命连环call",
+      "gender": "male",
+      "description_template": "过年回家第{day}天，你妈终于忍不住了：\n\n「隔壁老{neighbor}家的儿子都二胎了！你看看你！」\n\n{relative}在旁边补刀：「是啊，你也老大不小了，人家姑娘可不等你。」\n\n你深呼一口气。你的银行卡余额够娶十个老婆，但你不能说。",
+      "variables": {
+        "day": [1, 2, 3],
+        "neighbor": ["王", "张", "李"],
+        "relative": ["大姨", "奶奶", "七大姑八大姨联合体"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "微笑应对，转移话题到投资理财",
+          "hint": "💬 [系统] 用存款数字震慑催婚联盟。虽然不一定管用。",
+          "consequences": { "stress": 15, "social": -5 },
+          "narrative": "你巧妙地把话题从「什么时候结婚」转到了「今年经济形势」。大姨听了五分钟后眼神涣散，催婚话题暂时结束。但你知道，这只是休战，不是停战。"
+        },
+        {
+          "key": "B",
+          "text": "去相亲看看吧，不亏",
+          "hint": "💬 [系统] 也许真能遇到合适的呢？重生者也需要爱情。",
+          "consequences": { "stress": 10, "social": 5, "emotional_iq": 1 },
+          "narrative": "你去了。对方是个文静的姑娘，聊了两个小时。加了微信。至于后续发展……看缘分吧。"
+        },
+        {
+          "key": "C",
+          "text": "「我事业为重，以后再说」",
+          "hint": "💬 [系统] 经典回复。但在中国家庭面前，这句话的防御力约等于零。",
+          "consequences": { "stress": 20, "social": -10 },
+          "narrative": "你妈当场叹了口气。「事业事业，你就知道事业，我还能等你几年？」回城那天你松了口气。"
+        }
+      ],
+      "weight": 1.2
+    },
+    {
+      "id": "2019_marriage_pressure_female",
+      "title": "催婚：妈妈转发了一篇可怕的文章",
+      "gender": "female",
+      "description_template": "过年回家第{day}天，你妈给你转发了一篇文章：\n\n《女人过了30就……》\n\n你还没点开，{relative}已经开始了：「你看看你表姐，人家孩子都会跑了。你呢？」\n\n你妈在旁边叹气：「妈不是逼你，妈是为你好。」",
+      "variables": {
+        "day": [1, 2, 3],
+        "relative": ["大姨", "奶奶", "姑妈"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "耐心解释自己的规划，请她们放心",
+          "hint": "💬 [系统] 讲道理在催婚面前不堪一击。但态度要有。",
+          "consequences": { "stress": 15, "social": -5 },
+          "narrative": "你认真地说了自己的事业规划和生活态度。你妈半信半疑：「那你至少把那篇文章看了。」你默默把文章删了。"
+        },
+        {
+          "key": "B",
+          "text": "去相亲看看吧，反正不吃亏",
+          "hint": "💬 [系统] 也许真能遇到合适的呢？重生者也需要爱情。",
+          "consequences": { "stress": 10, "social": 5, "emotional_iq": 1 },
+          "narrative": "你去了。对方是个挺踏实的男生，话不多但人不坏。加了微信。至于后续发展……看缘分吧。"
+        },
+        {
+          "key": "C",
+          "text": "「我自己的人生我做主」",
+          "hint": "💬 [系统] 霸气。但代价是你妈可能一个月不跟你说话。",
+          "consequences": { "stress": 20, "social": -10 },
+          "narrative": "饭桌上安静了三秒。你妈放下了筷子。那个春节的剩余几天，家里的气压低到可怕。但你不后悔。"
+        }
+      ],
+      "weight": 1.2
+    },
+    {
+      "id": "2019_comparison_anxiety",
+      "title": "朋友圈让你DNA动了",
+      "gender": "both",
+      "description_template": "刷朋友圈的时候你看到：\n\n{classmate_a}晒了新提的{car}；\n{classmate_b}在马尔代夫度蜜月；\n{classmate_c}升了{position}，薪资直接翻倍。\n\n你默默关掉手机。虽然你知道自己的资产比他们都多，但那种焦虑还是隐隐升起。",
+      "variables": {
+        "classmate_a": ["高中同学阿军", "大学同学小刚", "前同事老赵"],
+        "car": ["宝马3系", "特斯拉Model 3", "奔驰C级"],
+        "classmate_b": ["大学闺蜜小美", "表妹小雨", "前同事丽丽"],
+        "classmate_c": ["同届的学霸张伟", "一起入职的老王", "前领导的得意门生"],
+        "position": ["总监", "VP", "合伙人"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "关闭朋友圈，眼不见心不烦",
+          "hint": "💬 [系统] 朋友圈是精心策划的人生高光。你的BTC账户才是真实的成绩单。",
+          "consequences": { "stress": -10 },
+          "narrative": "你关闭了朋友圈入口。世界瞬间安静了。没有攀比，没有焦虑，只有你和你的计划。"
+        },
+        {
+          "key": "B",
+          "text": "化焦虑为动力，更努力搞钱",
+          "hint": "💬 [系统] 适度的焦虑是好的。过度的焦虑会让你做蠢事。",
+          "consequences": { "stress": 10, "reputation": 5 },
+          "narrative": "你把这种不舒服的感觉转化成了行动力。加班、学习、优化投资组合。你知道两年后你会站在食物链顶端。"
+        }
+      ],
+      "weight": 0.8
+    }
+  ],
+  "opportunity": [
+    {
+      "id": "2019_stockpile_masks",
+      "title": "【先知事件】有个奇怪的念头……",
+      "gender": "both",
+      "description_template": "你刷新闻的时候看到一条关于{news}的报道。\n\n突然，你脑子里闪过一个念头：「要不要……囤点口罩？」\n\n这个念头说不清从哪来的。也许是重生者的直觉。也许是你隐约记得2020年会发生什么。\n\n{supplier}那边N95口罩{price}一只，起订量{min_order}个。",
+      "variables": {
+        "news": ["东南亚某国流感疫情", "医疗器械行业分析", "环保口罩新标准"],
+        "supplier": ["1688上的工厂", "朋友介绍的医疗器械渠道", "淘宝批发商"],
+        "price": ["1.5元", "2元", "1.8元"],
+        "min_order": [5000, 10000, 20000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "囤！大量囤！多多益善！",
+          "hint": "💬 [系统] 如果你知道2020年1月会发生什么，那这笔投资的回报率是……算了，算不出来。",
+          "consequences": { "savings": -50000, "stress": 10 },
+          "narrative": "你花了一大笔钱囤了几万只口罩。快递小哥看你的眼神像在看疯子。你把口罩塞满了一个储物间。你告诉自己：等着吧。"
+        },
+        {
+          "key": "B",
+          "text": "买个几千只，以防万一",
+          "hint": "💬 [系统] 谨慎但不过分。万一用不上，亏损可控。",
+          "consequences": { "savings": -10000, "stress": 5 },
+          "narrative": "你买了几千只口罩，堆在衣柜角落。朋友来做客问你这是什么，你说「未雨绸缪」。TA笑了。你没笑。"
+        },
+        {
+          "key": "C",
+          "text": "这念头太离谱了，算了",
+          "hint": "💬 [系统] 好吧。但如果你到了2020年1月还能想起这件事……",
+          "consequences": { "stress": -5 },
+          "narrative": "你摇了摇头，觉得自己想多了。谁会没事囤口罩呢？你关掉了淘宝，继续刷视频。"
+        }
+      ],
+      "weight": 1.3
+    },
+    {
+      "id": "2019_5g_investment",
+      "title": "5G元年：风口上的猪",
+      "gender": "both",
+      "description_template": "5G牌照正式发放！新闻铺天盖地。\n\n{analyst}的报告说，5G产业链未来五年的市场规模将达到{market_size}万亿。\n\n你的券商APP推送了一堆5G概念股：{stock_a}、{stock_b}、{stock_c}……\n\n要上车吗？",
+      "variables": {
+        "analyst": ["某券商首席分析师", "一个知名财经博主", "你关注的投资大V"],
+        "market_size": [3, 5, 8],
+        "stock_a": ["中兴通讯", "烽火通信", "信维通信"],
+        "stock_b": ["沪电股份", "深南电路", "生益科技"],
+        "stock_c": ["卓胜微", "兆易创新", "韦尔股份"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "买入5G龙头股，长期持有",
+          "hint": "💬 [系统] 5G确实是大趋势。但A股的钱没那么好赚。别放太多。",
+          "consequences": { "savings": -30000, "stocks": 30000, "stress": 5 },
+          "narrative": "你挑了几只5G龙头股建了仓。A股不是你的主战场，但分散投资总没错。"
+        },
+        {
+          "key": "B",
+          "text": "看看就好，我的主仓在BTC",
+          "hint": "💬 [系统] 专注。你最大的优势在于确定性。BTC的确定性远高于A股。",
+          "consequences": { "stress": -5 },
+          "narrative": "你克制住了追热点的冲动。你知道自己的核心策略是什么。5G是好赛道，但BTC才是你的主航道。"
+        }
+      ],
+      "weight": 0.7
+    }
+  ],
+  "milestone": [
+    {
+      "id": "2019_found_partner",
+      "title": "终于脱单了！",
+      "check": "has_partner",
+      "description_template": "你有对象了！\n\nTA叫{name}，是{how_met}认识的。第一次见面的时候你们聊了{duration}个小时。\n\n在一起之后你才发现——原来重生者最缺的不是钱，是一个能说心里话的人。\n\n当然，你不会告诉TA你是重生者。",
+      "variables": {
+        "name": ["小林", "阿瑶", "子涵"],
+        "how_met": ["朋友介绍", "相亲", "旅行中偶然"],
+        "duration": [3, 4, 5]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "认真经营这段感情",
+          "hint": "💬 [系统] 钱能重生赚回来。感情……每一段都是独一无二的。珍惜。",
+          "consequences": { "stress": -20, "relationship": 20, "social": 10 },
+          "narrative": "你开始学习做饭、记住TA的喜好、在TA生日那天准备惊喜。这些事你上辈子从没做过。也许这一次，你能做对。"
+        },
+        {
+          "key": "B",
+          "text": "顺其自然吧，不给太大压力",
+          "hint": "💬 [系统] 也行。但别太佛了，感情也需要经营。",
+          "consequences": { "stress": -10, "relationship": 10 },
+          "narrative": "你们保持着舒服的节奏。不黏糊也不冷淡。你享受这种感觉——有人在等你回家。"
+        }
+      ],
+      "weight": 1.0
+    }
+  ]
+}

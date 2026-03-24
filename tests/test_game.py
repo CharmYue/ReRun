@@ -50,7 +50,7 @@ class TestEventGeneration:
         # Advance to 2018 (boss year)
         engine.state = engine.state.model_copy(update={"year": 2018})
         events = engine.get_events_for_year()
-        assert len(events) == 2
+        assert len(events) >= 2  # boss years guarantee at least 2 events
 
 
 class TestChoiceProcessing:

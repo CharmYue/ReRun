@@ -19,9 +19,11 @@ from rerun.engine.events import (
     generate_fallback_event,
     get_year_background,
     get_year_context,
+    select_events_from_pool,
 )
 from rerun.engine.state import (
     YEAR_END,
+    Gender,
     PlayerState,
     create_player,
     get_btc_price,
@@ -104,10 +106,11 @@ class GameEngine:
         self.tracker = EventTracker()
         self.start_time: float = 0.0
         self.initial_savings: float = 0.0
+        self.reached_milestones: set[int] = set()
 
-    def init_player(self, preset: int) -> PlayerState:
-        """Initialize player from a starting preset."""
-        self.state = create_player(preset)
+    def init_player(self, preset: int, gender: Gender = Gender.MALE) -> PlayerState:
+        """Initialize player from a starting preset and gender."""
+        self.state = create_player(preset, gender)
         self.initial_savings = self.state.savings
         self.state_history = [self.state]
         self.start_time = time.time()
@@ -125,20 +128,33 @@ class GameEngine:
         )
 
     def get_events_for_year(self) -> list[GameEvent]:
-        """Generate all events for the current year."""
-        year = self.state.year
-        num_events = self.tracker.events_for_year(year)
+        """Generate events for the current year.
 
-        # Check stat triggers for forced categories
+        Uses the year-based event pool system first (v0.2).
+        Falls back to the legacy category-based system if no pool exists.
+        """
+        year = self.state.year
+
+        # Try new pool-based system first
+        pool_events = select_events_from_pool(
+            year,
+            self.state,
+            used_ids=self.tracker.used_pool_ids,
+            consecutive_negative_years=self.tracker.consecutive_negative_years,
+        )
+
+        if pool_events:
+            return pool_events
+
+        # Fallback to legacy system
+        num_events = self.tracker.events_for_year(year)
         triggers = check_stat_triggers(self.state)
         forced = get_forced_categories(triggers)
 
         events: list[GameEvent] = []
         for i in range(num_events):
-            # First event: use forced category if available, otherwise normal
             exclude = self.tracker.exclude_categories
             if i == 0 and forced:
-                # Try to generate from forced category
                 event = generate_fallback_event(
                     year,
                     self.state,
@@ -190,8 +206,22 @@ class GameEngine:
             unlocked_achievements=unlocked_display,
         )
 
-    def settle_year(self) -> YearEnd:
+    def settle_year(self, year_events: list[GameEvent] | None = None) -> YearEnd:
         """Settle the year-end: apply income/expense, advance year."""
+        # Track year sentiment for consecutive negative year control
+        if year_events:
+            has_neg = any(e.template_id.startswith(f"{self.state.year}_") and
+                         any(kw in e.template_id for kw in ("crash", "fomo", "ban", "scam",
+                              "rent", "burnout", "layoff", "sick", "lost", "hack", "tax",
+                              "anxiety", "fear", "pressure", "conflict"))
+                         for e in year_events)
+            has_pos = any(e.template_id.startswith(f"{self.state.year}_") and
+                         any(kw in e.template_id for kw in ("bonus", "friend", "lottery",
+                              "moon", "reunion", "wedding", "praise", "surprise", "mom",
+                              "cooking", "halving", "btc", "happy", "warm", "celebrate"))
+                         for e in year_events)
+            self.tracker.record_year_sentiment(has_neg, has_pos)
+
         year_end = YearEnd(year=self.state.year, state=self.state)
         self.state = self.state.settle_year()
         self.state_history.append(self.state)
@@ -200,6 +230,20 @@ class GameEngine:
     def is_game_over(self) -> bool:
         """Check if the game has reached its final year."""
         return self.state.year > YEAR_END
+
+    def is_bankrupt(self) -> bool:
+        """Check if the player is bankrupt (net worth below zero)."""
+        return self.state.savings < 0 and self.state.net_worth < 0
+
+    def apply_bankruptcy_continue(self) -> None:
+        """Reset to a low-income state for 'continue from bankruptcy' mode."""
+        self.state = self.state.model_copy(update={
+            "savings": 10000.0,
+            "monthly_salary": 4500.0,
+            "is_employed": True,
+            "job_title": "小城打工人",
+            "stress": 60,
+        })
 
     def get_ending(self) -> GameEnding:
         """Build the final settlement data."""
@@ -211,6 +255,17 @@ class GameEngine:
             baseline_net_worth=NO_RERUN_BASELINE,
         )
 
+    def check_prophet(self) -> str | None:
+        """Check if a prophet feedback should fire this year."""
+        from rerun.engine.prophet import check_prophet_trigger
+        return check_prophet_trigger(self.state.year, self.state)
+
+    def check_milestone(self) -> str | None:
+        """Check if a milestone celebration should fire."""
+        from rerun.engine.prophet import check_milestone
+        msg, self.reached_milestones = check_milestone(self.state, self.reached_milestones)
+        return msg
+
     def reset(self) -> None:
         """Reset for a new run."""
         self.state = PlayerState()
@@ -218,3 +273,4 @@ class GameEngine:
         self.tracker = EventTracker()
         self.start_time = 0.0
         self.initial_savings = 0.0
+        self.reached_milestones = set()

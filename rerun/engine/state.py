@@ -2,7 +2,16 @@
 
 from __future__ import annotations
 
+from enum import Enum
+
 from pydantic import BaseModel, Field
+
+
+class Gender(str, Enum):
+    """Player gender — affects event text and some event availability."""
+
+    MALE = "male"
+    FEMALE = "female"
 
 # ---------------------------------------------------------------------------
 # Historical price tables (real data, used for net_worth calculation)
@@ -62,6 +71,9 @@ class PlayerState(BaseModel):
     Immutable by convention — use `apply_consequences` to derive a new state.
     """
 
+    # --- Identity ---
+    gender: Gender = Gender.MALE
+
     # --- Timeline ---
     year: int = YEAR_START
 
@@ -77,12 +89,20 @@ class PlayerState(BaseModel):
     social: int = 50
     reputation: int = 30
 
+    # --- Skills (1-5, influence available options and events) ---
+    investment_iq: int = 1   # 投资认知
+    career_level: int = 1    # 职业能力
+    network: int = 1         # 人脉圈层
+    emotional_iq: int = 1    # 情商
+
     # --- Life status ---
     has_partner: bool = False
+    has_child: bool = False
     is_employed: bool = True
     job_title: str = "普通上班族"
     monthly_salary: float = 8000.0
     monthly_expense: float = 5000.0
+    mortgage_monthly: float = 0.0  # monthly mortgage payment (0 = no mortgage)
 
     # --- Records (for achievements & ending review) ---
     choices_log: list[dict] = Field(default_factory=list)
@@ -109,12 +129,52 @@ class PlayerState(BaseModel):
     def property_value(self) -> float:
         return self.properties * get_property_price(self.year)
 
+    def calculate_annual_costs(self) -> dict[str, float]:
+        """Calculate detailed annual living costs.
+
+        Returns a dict of {label: amount} for display purposes.
+        Costs scale with year to simulate inflation.
+        """
+        costs: dict[str, float] = {}
+        year_offset = self.year - YEAR_START  # 0 in 2015, 10 in 2025
+
+        # Base living expenses (food, transport, utilities, etc.)
+        base_living = 36000 + year_offset * 3000  # ¥36K in 2015, +3K/year
+        costs["日常开支"] = base_living
+
+        # Housing: rent (no property) or mortgage (has property)
+        if self.properties == 0:
+            rent = 24000 + year_offset * 2400  # ¥2K/month in 2015, +200/month/year
+            costs["房租"] = rent
+        elif self.mortgage_monthly > 0:
+            costs["房贷"] = self.mortgage_monthly * 12
+
+        # Partner expenses
+        if self.has_partner:
+            costs["恋爱/家庭开支"] = 18000 + year_offset * 1200
+
+        # Child expenses
+        if self.has_child:
+            costs["养娃开支"] = 50000 + year_offset * 5000
+
+        return costs
+
+    @property
+    def annual_living_cost(self) -> float:
+        """Total annual living costs (detailed calculation)."""
+        return sum(self.calculate_annual_costs().values())
+
+    @property
+    def annual_salary_income(self) -> float:
+        """Annual salary income (0 if unemployed)."""
+        if not self.is_employed:
+            return 0.0
+        return self.monthly_salary * 12
+
     @property
     def annual_net_income(self) -> float:
-        """Yearly income after expenses (12 months)."""
-        if not self.is_employed:
-            return -self.monthly_expense * 12
-        return (self.monthly_salary - self.monthly_expense) * 12
+        """Yearly income after all living costs."""
+        return self.annual_salary_income - self.annual_living_cost
 
     # --- State transitions ---
 
@@ -138,6 +198,9 @@ class PlayerState(BaseModel):
                 # Clamp 0-100 stats
                 if key in ("stress", "relationship", "social", "reputation"):
                     new_val = max(0, min(100, int(new_val)))
+                # Clamp 1-5 skills
+                if key in ("investment_iq", "career_level", "network", "emotional_iq"):
+                    new_val = max(1, min(5, int(new_val)))
                 # Savings can go negative (debt), but btc/properties can't
                 if key in ("btc_amount", "properties", "stocks"):
                     new_val = max(0, new_val)
@@ -181,6 +244,8 @@ class PlayerState(BaseModel):
             update={
                 "savings": new_savings,
                 "year": self.year + 1,
+                # Note: mortgage_monthly persists, monthly_expense is now
+                # superseded by calculate_annual_costs() for actual deductions
             }
         )
 
@@ -220,7 +285,7 @@ STARTING_PRESETS: dict[int, dict] = {
 }
 
 
-def create_player(preset: int) -> PlayerState:
-    """Create a PlayerState from a starting preset (1/2/3)."""
+def create_player(preset: int, gender: Gender = Gender.MALE) -> PlayerState:
+    """Create a PlayerState from a starting preset (1/2/3) and gender."""
     overrides = STARTING_PRESETS.get(preset, STARTING_PRESETS[2])
-    return PlayerState(**overrides)
+    return PlayerState(gender=gender, **overrides)

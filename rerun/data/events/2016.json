@@ -1,0 +1,265 @@
+{
+  "year": 2016,
+  "positive": [
+    {
+      "id": "2016_mom_saved_money",
+      "title": "妈妈偷偷给你存了钱",
+      "gender": "both",
+      "description_template": "过年回家，你妈偷偷塞给你一个信封。\n\n「这是妈这几年攒的，{amount}块。你在外面不容易，别委屈自己。」\n\n你打开一看，里面是一沓皱巴巴的钞票。你鼻子一酸。",
+      "variables": {
+        "amount": [5000, 8000, 10000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "收下，以后加倍还给她",
+          "hint": "💬 [系统] 妈妈的钱，每一分都是爱。你知道未来你能给她更好的生活。",
+          "consequences": { "savings": 1, "relationship": 10, "stress": -15 },
+          "narrative": "你收下了。心里默默发誓，以后一定让妈过上好日子。这一次，你做得到。"
+        },
+        {
+          "key": "B",
+          "text": "不要，「妈我不缺钱」",
+          "hint": "💬 [系统] 你确实不缺。但妈的心意比钱更重要。",
+          "consequences": { "relationship": 5, "stress": -10 },
+          "narrative": "你硬是把钱塞了回去。你妈叹了口气：「这孩子，倔。」但她笑了。"
+        }
+      ],
+      "weight": 1.2
+    },
+    {
+      "id": "2016_work_praise",
+      "title": "工作得到了认可",
+      "gender": "both",
+      "description_template": "你负责的{project}上线后效果很好。\n\n老板在周会上公开表扬了你：「{praise}」\n\n同事们投来羡慕的目光。",
+      "variables": {
+        "project": ["新功能模块", "系统重构", "紧急项目"],
+        "praise": ["这个项目多亏了你，大家给点掌声", "表现非常出色，是团队的骨干", "这个季度的MVP非你莫属"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "谦虚一下，继续努力",
+          "hint": "💬 [系统] 低调做人，高调……买币。",
+          "consequences": { "reputation": 10, "stress": -5 },
+          "narrative": "你笑着说了句「团队功劳」。心里想的是：打工嘛，维持住就行，重点在别处。"
+        },
+        {
+          "key": "B",
+          "text": "趁热打铁，提出加薪要求",
+          "hint": "💬 [系统] 时机不错。谈钱不伤感情，伤的是老板的预算。",
+          "consequences": { "monthly_salary": 2000, "reputation": 5, "stress": 5 },
+          "narrative": "你找老板聊了聊，月薪涨了2000。虽然比不上BTC的涨幅，但蚊子再小也是肉。"
+        }
+      ],
+      "weight": 1.0
+    },
+    {
+      "id": "2016_funny_blind_date",
+      "title": "奇葩相亲经历",
+      "gender": "both",
+      "description_template": "你妈安排了一场相亲。对方{description}。\n\n见面后TA的第一句话是：「{opening}」\n\n你差点把水喷出来。",
+      "variables": {
+        "description": ["是你妈广场舞舞伴的儿子/女儿", "是你爸同事的孩子", "是你姨介绍的"],
+        "opening": ["你一个月赚多少？我先说，我月薪3500", "你有房吗？没房我们没什么好聊的", "我妈说你人挺老实的。确实挺老实的。"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "认真聊聊，给个机会",
+          "hint": "💬 [系统] 也许TA只是紧张……吧？",
+          "consequences": { "stress": 5, "social": 5 },
+          "narrative": "你们尬聊了一个小时。对方人倒不坏，就是话题总往房子车子上拐。你全程微笑，内心在演独角戏。"
+        },
+        {
+          "key": "B",
+          "text": "找借口溜了，太尴尬了",
+          "hint": "💬 [系统] 「不好意思，我突然想起来交易所要维护……」",
+          "consequences": { "stress": -5, "social": -5 },
+          "narrative": "你假装接了个电话，说公司有急事。回家路上忍不住笑出声。把这事发给朋友群，收获了50条哈哈哈。"
+        },
+        {
+          "key": "C",
+          "text": "把这当段子记下来",
+          "hint": "💬 [系统] 生活给你的不只是财富，还有素材。",
+          "consequences": { "stress": -10 },
+          "narrative": "你把今天的经历写成了一条朋友圈，获得了年度最佳段子奖。妈妈看到了，生了一天气。"
+        }
+      ],
+      "weight": 0.8
+    },
+    {
+      "id": "2016_btc_halving",
+      "title": "BTC减半到来",
+      "gender": "both",
+      "description_template": "BTC完成了第二次产量减半！区块奖励从25降到了12.5。\n\n币圈社群一片兴奋。你知道这意味着什么——供给减少，需求不变，接下来就是……\n\n你忍不住嘴角上扬。",
+      "variables": {},
+      "choices": [
+        {
+          "key": "A",
+          "text": "加仓！减半后必涨",
+          "hint": "💬 [系统] 减半效应，你比任何人都清楚。2017年的疯牛，就在前方。",
+          "consequences": { "stress": 10 },
+          "narrative": "你果断加仓。同事们觉得你疯了。你微微一笑——等着瞧。"
+        },
+        {
+          "key": "B",
+          "text": "持仓不动，不追高",
+          "hint": "💬 [系统] 你已经有了足够的筹码。现在需要的只是耐心。",
+          "consequences": { "stress": -5 },
+          "narrative": "你选择按兵不动。涨跌都不慌，因为你知道终局。"
+        }
+      ],
+      "weight": 1.0
+    }
+  ],
+  "negative": [
+    {
+      "id": "2016_house_fomo",
+      "title": "全民抢房焦虑",
+      "gender": "both",
+      "description_template": "房价彻底疯了。{city}房价一年涨了{percent}%。\n\n朋友圈里天天有人晒新房钥匙。你妈每天打电话催你买房。连出租车司机都在聊房子。\n\n所有人都在说：「再不买就永远买不起了！」",
+      "variables": {
+        "city": ["深圳", "上海", "北京", "杭州"],
+        "percent": [40, 50, 60]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "咬牙买一套，大家都在买",
+          "hint": "💬 [系统] 你知道房价还会涨几年。但你也知道BTC涨得更多。钱，只有一份。",
+          "consequences": { "savings": -300000, "properties": 1, "relationship": 15, "stress": 20 },
+          "narrative": "你凑了首付，签了30年房贷。你妈终于不催了。但你心里在算：这300000如果买了BTC……算了，别想了。"
+        },
+        {
+          "key": "B",
+          "text": "坚定不买，把钱留给BTC",
+          "hint": "💬 [系统] 你是全小区唯一知道BTC明年要涨到13万的人。这个信息差值多少套房？",
+          "consequences": { "relationship": -10, "stress": 15 },
+          "narrative": "你顶住了所有压力。你妈说你不听话，朋友说你傻。但你知道自己在做什么。"
+        },
+        {
+          "key": "C",
+          "text": "敷衍说「在看了」，继续拖",
+          "hint": "💬 [系统] 拖延大法好。但每拖一天，你妈的焦虑就多一分。",
+          "consequences": { "relationship": -5, "stress": 10 },
+          "narrative": "你又一次成功拖延了。但你知道这个话题还会回来。一遍又一遍。"
+        }
+      ],
+      "weight": 1.2
+    },
+    {
+      "id": "2016_overtime_burnout",
+      "title": "连续加班身体扛不住了",
+      "gender": "both",
+      "description_template": "连续加班{weeks}周后，你的身体开始抗议了。\n\n{symptom}。\n\n你看了眼银行余额，又看了眼日历。你知道2017年就要来了。但前提是你得撑到那时候。",
+      "variables": {
+        "weeks": [3, 4, 6],
+        "symptom": ["每天头疼，安眠药从偶尔吃变成了必须吃", "体检报告亮了好几个红灯，医生说你需要休息", "脖子疼到转不了头，腰也开始不行了"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "请几天假休息一下",
+          "hint": "💬 [系统] 身体是革命的本钱。BTC再值钱，也得你活着才能花。",
+          "consequences": { "stress": -20, "reputation": -5 },
+          "narrative": "你请了三天假。睡了两天，然后去做了个全身按摩。满血复活。"
+        },
+        {
+          "key": "B",
+          "text": "扛着，熬过这段就好了",
+          "hint": "💬 [系统] 年轻人总觉得自己扛得住。直到扛不住的那天。",
+          "consequences": { "stress": 15, "reputation": 5 },
+          "narrative": "你又硬撑了两周。项目结束了，但你的黑眼圈深得像两个黑洞。"
+        }
+      ],
+      "weight": 0.9
+    }
+  ],
+  "opportunity": [
+    {
+      "id": "2016_invest_course",
+      "title": "朋友推荐了一个投资课程",
+      "gender": "both",
+      "description_template": "朋友推荐了一个{course}，费用{cost}，为期{duration}。\n\n「老师讲得挺好的，上完对投资理解深了不少。」",
+      "variables": {
+        "course": ["价值投资入门课", "区块链与数字货币课", "财务自由实操课"],
+        "cost": [3000, 5000, 8000],
+        "duration": ["三个月", "半年", "一个月集训"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "报名！投资自己永远不亏",
+          "hint": "💬 [系统] 你当然不需要这个课。但说不定能认识一些志同道合的人。",
+          "consequences": { "savings": -1, "social": 10, "reputation": 5, "investment_iq": 1, "network": 1 },
+          "narrative": "你报了名。课程内容你早就知道了，但你认识了几个不错的投资圈朋友。人脉这东西，有时候比知识更值钱。"
+        },
+        {
+          "key": "B",
+          "text": "不需要，自学就够了",
+          "hint": "💬 [系统] 你是重生者，确实不需要。但也别太自信。",
+          "consequences": { "stress": -5 },
+          "narrative": "你继续自学研究。毕竟你的「教材」是十年的未来记忆，比任何课程都硬核。"
+        }
+      ],
+      "weight": 0.7
+    },
+    {
+      "id": "2016_job_switch",
+      "title": "猎头联系你了",
+      "gender": "both",
+      "description_template": "猎头在LinkedIn上联系你：「{company}在招{position}，月薪{salary}K，感兴趣聊聊吗？」\n\n这薪资比你现在高不少。",
+      "variables": {
+        "company": ["某BAT大厂", "一家知名独角兽", "一个新兴互联网公司"],
+        "position": ["高级开发", "技术主管", "产品经理"],
+        "salary": [15, 20, 25]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "去面试看看，没坏处",
+          "hint": "💬 [系统] 涨薪是最稳的投资。月薪涨5K，一年多6万。",
+          "consequences": { "monthly_salary": 5000, "stress": 10, "job_title": "跳槽新人", "career_level": 1 },
+          "narrative": "你顺利通过面试，跳槽成功。新公司节奏更快，但薪资也更香了。"
+        },
+        {
+          "key": "B",
+          "text": "现在的工作挺好的，不折腾了",
+          "hint": "💬 [系统] 稳定有稳定的好。心思放在投资上更划算。",
+          "consequences": { "stress": -5 },
+          "narrative": "你婉拒了猎头。毕竟现在的工作不太忙，留给你充足的时间研究投资。"
+        }
+      ],
+      "weight": 0.9
+    }
+  ],
+  "milestone": [
+    {
+      "id": "2016_100k_check",
+      "title": "存款突破十万！",
+      "check": "savings_gt_100000",
+      "description_template": "你看了眼银行余额——突破十万了！\n\n虽然放在{city}这不算什么，但你知道，这只是起点。",
+      "variables": {
+        "city": ["北京", "上海", "深圳"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "小小庆祝一下",
+          "hint": "💬 [系统] 你比全国70%的同龄人有钱了。不过别膨胀，你的目标可不只是这个数。",
+          "consequences": { "savings": -500, "stress": -10 },
+          "narrative": "你请自己吃了顿好的。服务员不会知道，这位看起来普通的客人，正在下一盘十年的大棋。"
+        },
+        {
+          "key": "B",
+          "text": "不庆祝，这才哪到哪",
+          "hint": "💬 [系统] 格局。100万再庆祝也不迟。",
+          "consequences": { "stress": -5 },
+          "narrative": "你淡淡地关掉了银行APP。区区十万，在你的计划里不值一提。"
+        }
+      ],
+      "weight": 1.0
+    }
+  ]
+}

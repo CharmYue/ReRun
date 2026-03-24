@@ -42,11 +42,15 @@ class TestPlayerStateDefaults:
 
     def test_annual_net_income_employed(self):
         s = PlayerState(monthly_salary=10000, monthly_expense=6000)
-        assert s.annual_net_income == 48000.0
+        # annual_net_income = salary*12 - annual_living_cost
+        # In 2015: base living 36000 + rent 24000 = 60000
+        assert s.annual_net_income == 10000 * 12 - s.annual_living_cost
+        assert s.annual_living_cost == 60000  # base + rent in 2015
 
     def test_annual_net_income_unemployed(self):
         s = PlayerState(is_employed=False, monthly_expense=5000)
-        assert s.annual_net_income == -60000.0
+        # No salary, still pays living costs
+        assert s.annual_net_income == -s.annual_living_cost
 
 
 class TestApplyConsequences:
@@ -126,13 +130,16 @@ class TestSettleYear:
         s = PlayerState(year=2015, savings=80000, monthly_salary=8000, monthly_expense=5000)
         s2 = s.settle_year()
         assert s2.year == 2016
-        assert s2.savings == 80000 + (8000 - 5000) * 12
+        # Uses detailed cost system: salary*12 - annual_living_cost
+        assert s2.savings == 80000 + s.annual_net_income
 
     def test_unemployed_loses_money(self):
         s = PlayerState(year=2020, savings=100000, is_employed=False, monthly_expense=5000)
         s2 = s.settle_year()
         assert s2.year == 2021
-        assert s2.savings == 100000 - 60000
+        # No salary, pays full living costs
+        assert s2.savings == 100000 - s.annual_living_cost
+        assert s2.savings < 100000  # definitely lost money
 
 
 class TestAchievements:

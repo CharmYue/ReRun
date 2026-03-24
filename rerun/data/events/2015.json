@@ -1,0 +1,271 @@
+{
+  "year": 2015,
+  "positive": [
+    {
+      "id": "2015_year_end_bonus",
+      "title": "意外的年终奖",
+      "gender": "both",
+      "description_template": "年底了，公司效益不错。老板大手一挥，年终奖多发了{bonus}！\n\n同事们在群里刷屏庆祝。你默默打开计算器，开始算这笔钱能买多少BTC。",
+      "variables": {
+        "bonus": [5000, 8000, 12000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "全部存起来，先攒本金",
+          "hint": "💬 [系统] 稳健派。存折里的数字让你安心。",
+          "consequences": { "savings": 1, "stress": -5 },
+          "narrative": "年终奖到账，余额看着舒服多了。你给自己点了份外卖庆祝。"
+        },
+        {
+          "key": "B",
+          "text": "拿去买BTC，这价格简直是白送",
+          "hint": "💬 [系统] 2015年的BTC价格，以后再也见不到了。你知道的。",
+          "consequences": { "stress": 5 },
+          "narrative": "你把年终奖全部买了BTC。打开交易所看着那串数字，嘴角微微上扬。"
+        },
+        {
+          "key": "C",
+          "text": "犒劳自己一下，买个想要很久的东西",
+          "hint": "💬 [系统] 人活着不能只看数字。偶尔对自己好一点。",
+          "consequences": { "savings": -3000, "stress": -15 },
+          "narrative": "你终于买了那个种草很久的东西。幸福感这东西，有时候就是这么简单。"
+        }
+      ],
+      "weight": 1.0
+    },
+    {
+      "id": "2015_old_friend_contact",
+      "title": "老朋友突然联系你",
+      "gender": "both",
+      "description_template": "你手机突然响了。\n\n是{friend}！你们{duration}没联系了。\n\n「在吗？最近怎么样？突然想起你了，周末一起吃个饭呗。」",
+      "variables": {
+        "friend": ["大学室友小陈", "高中铁哥们阿杰", "发小丽丽"],
+        "duration": ["大半年", "快一年", "好几个月"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "当然！好久不见了",
+          "hint": "💬 [系统] 老朋友的饭局，是充电站不是消耗站。",
+          "consequences": { "social": 10, "stress": -10, "network": 1 },
+          "narrative": "你们聊了一晚上，从大学糗事聊到未来规划。{friend}说「感觉你变了，比以前自信了」。你笑笑没解释。"
+        },
+        {
+          "key": "B",
+          "text": "改天吧，最近有点忙",
+          "hint": "💬 [系统] 忙着看盘？",
+          "consequences": { "social": -5 },
+          "narrative": "你婉拒了。挂了电话有一瞬间的失落。算了，以后有的是时间。"
+        }
+      ],
+      "weight": 1.0
+    },
+    {
+      "id": "2015_small_lottery",
+      "title": "刮刮乐中奖了",
+      "gender": "both",
+      "description_template": "路过彩票站，你手贱买了张{price}的刮刮乐。\n\n刮开一看——中了{prize}！\n\n虽然不多，但今天运气不错。",
+      "variables": {
+        "price": [10, 20],
+        "prize": [200, 500, 1000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "见好就收，拿钱走人",
+          "hint": "💬 [系统] 作为重生者，你知道赌博的期望值是负的。这次纯属运气。",
+          "consequences": { "savings": 1, "stress": -5 },
+          "narrative": "你高高兴兴地揣着奖金走了。今天的奶茶钱有着落了。"
+        },
+        {
+          "key": "B",
+          "text": "手气这么好？再来几张！",
+          "hint": "💬 [系统] 赌徒谬误：觉得运气会延续。醒醒。",
+          "consequences": { "savings": -200, "stress": 5 },
+          "narrative": "你又买了十张，一张都没中。得，白高兴一场。"
+        }
+      ],
+      "weight": 0.8
+    },
+    {
+      "id": "2015_cooking_skill",
+      "title": "学会了做饭",
+      "gender": "both",
+      "description_template": "连续吃了一个月外卖后，你的胃终于抗议了。\n\n你去超市买了食材，跟着B站视频学做菜。\n第一次做的{dish}虽然卖相一般，但味道居然还行！",
+      "variables": {
+        "dish": ["番茄炒蛋", "可乐鸡翅", "蛋炒饭"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "以后自己做饭，省钱又健康",
+          "hint": "💬 [系统] 月省1000+外卖费。一年就是12000。足够买好几个BTC了。",
+          "consequences": { "monthly_expense": -1000, "stress": -5 },
+          "narrative": "你开始了自己做饭的生活。虽然偶尔翻车，但钱包和胃都感谢你。"
+        },
+        {
+          "key": "B",
+          "text": "偶尔做做就行，懒得天天弄",
+          "hint": "💬 [系统] 理解。毕竟你的时间也很值钱。",
+          "consequences": { "stress": -3 },
+          "narrative": "你开始了一周做两三次饭的节奏。剩下的时间嘛……还是外卖吧。"
+        }
+      ],
+      "weight": 0.7
+    }
+  ],
+  "negative": [
+    {
+      "id": "2015_stock_crash_friend",
+      "title": "朋友炒股亏惨了",
+      "gender": "both",
+      "description_template": "A股股灾，上证指数从5178暴跌到2850。\n\n你朋友{friend}在最高点入场，现在亏了{loss}万。TA在电话里声音都在抖：\n「借我点钱吧，我要补仓……」",
+      "variables": {
+        "friend": ["老王", "小张", "阿辉"],
+        "loss": [5, 10, 20]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "劝TA别补了，借TA一点生活费",
+          "hint": "💬 [系统] 理性又仗义。你知道A股还要跌。",
+          "consequences": { "savings": -5000, "social": 15, "stress": 5 },
+          "narrative": "你借了TA5000块生活费，但坚决不让TA补仓。TA现在不理解，以后会感谢你的。"
+        },
+        {
+          "key": "B",
+          "text": "你自己的钱得看紧，婉拒",
+          "hint": "💬 [系统] 你的钱有更大的用处。冷酷但理性。",
+          "consequences": { "social": -10, "stress": 10 },
+          "narrative": "你编了个理由拒绝了。{friend}有点失望。但你知道，接下来的10年，你需要每一分钱。"
+        },
+        {
+          "key": "C",
+          "text": "借TA钱补仓（不忍心看TA亏）",
+          "hint": "💬 [系统] 好心办坏事的经典案例。A股还没跌完呢。",
+          "consequences": { "savings": -20000, "social": 10, "stress": 15 },
+          "narrative": "{friend}感激涕零。但你心里清楚，这笔钱大概率是打水漂了。"
+        }
+      ],
+      "weight": 1.0
+    },
+    {
+      "id": "2015_rent_increase",
+      "title": "房东涨房租",
+      "gender": "both",
+      "description_template": "房东打来电话：「下个月房租涨{amount}，不租拉倒。」\n\n你看了看周边的租金，确实都在涨。{city}就是这样，年年涨。",
+      "variables": {
+        "amount": [300, 500, 800],
+        "city": ["北京", "上海", "杭州", "深圳"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "忍了，搬家太麻烦",
+          "hint": "💬 [系统] 省时间但费钱。时间值多少钱？看你怎么算。",
+          "consequences": { "monthly_expense": 1, "stress": 10 },
+          "narrative": "你叹了口气，接受了涨价。每月多交{amount}，一年就是好几千。"
+        },
+        {
+          "key": "B",
+          "text": "搬到便宜点的地方",
+          "hint": "💬 [系统] 省钱但折腾。通勤可能多半小时。",
+          "consequences": { "savings": -3000, "stress": 15, "monthly_expense": -500 },
+          "narrative": "你花了一周找房搬家。新房子远了点，但月租确实便宜了。"
+        }
+      ],
+      "weight": 1.0
+    }
+  ],
+  "opportunity": [
+    {
+      "id": "2015_first_btc",
+      "title": "有人跟你提到了比特币",
+      "gender": "both",
+      "description_template": "同事{name}午饭时聊起一个叫「比特币」的东西。\n\n「现在才一千多块钱一个，我买了几个玩玩。这东西去中心化，未来可能是革命性的……」\n\n你心里咯噔一下。你当然知道BTC。你等这一刻很久了。",
+      "variables": {
+        "name": ["技术部的老赵", "隔壁组的Peter", "你的mentor老刘"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "装作好奇，买一些试试",
+          "hint": "💬 [系统] 你的表演很到位。「哦？这是什么？听起来挺有意思的……」\n奥斯卡欠你一座小金人。",
+          "consequences": { "stress": 5, "investment_iq": 1 },
+          "narrative": "你「第一次」注册了交易所，买了一些BTC。当然，你装得像是在冒险。实际上，这是你最确定的投资。"
+        },
+        {
+          "key": "B",
+          "text": "表现出很大兴趣，All-in！",
+          "hint": "💬 [系统] 冷静！一个「刚听说BTC」的人不会all-in。低调，低调。",
+          "consequences": { "stress": 15, "social": -5 },
+          "narrative": "你太激动了，引起了同事的注意。{name}诧异地看着你：「你确定？你连白皮书都没看吧？」"
+        },
+        {
+          "key": "C",
+          "text": "不急，先做做功课再说",
+          "hint": "💬 [系统] 稳。虽然你已经「做了一辈子的功课」了。",
+          "consequences": { "stress": -5 },
+          "narrative": "你表现得很理性，说要先研究研究。回家后你开始认真规划：这辈子要怎么布局。"
+        }
+      ],
+      "weight": 1.5
+    },
+    {
+      "id": "2015_side_hustle",
+      "title": "发现一个赚外快的机会",
+      "gender": "both",
+      "description_template": "你发现{opportunity}，利用业余时间做的话，每月能多赚{income}左右。\n\n就是得牺牲一些休息时间。",
+      "variables": {
+        "opportunity": ["公众号写技术文章有打赏", "帮小公司做兼职开发", "在线教育平台录课程"],
+        "income": [2000, 3000, 5000]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "搞起来！多一份收入多一份底气",
+          "hint": "💬 [系统] 开源节流，重生者的基本功。",
+          "consequences": { "monthly_salary": 1, "stress": 15, "reputation": 5 },
+          "narrative": "你开始了996+副业的生活。虽然累，但看着每月多出来的收入，值了。"
+        },
+        {
+          "key": "B",
+          "text": "算了，时间用来研究投资更划算",
+          "hint": "💬 [系统] 你的时间确实更值钱——如果你把它花在刀刃上的话。",
+          "consequences": { "stress": -5 },
+          "narrative": "你选择把时间留给投资研究。毕竟，打工赚的和BTC比起来……"
+        }
+      ],
+      "weight": 0.8
+    }
+  ],
+  "milestone": [
+    {
+      "id": "2015_first_year_review",
+      "title": "重生第一年回顾",
+      "check": "always",
+      "description_template": "2015年就这样过去了。\n\n你回顾这一年：{review}\n\n一切才刚刚开始。",
+      "variables": {
+        "review": ["比上辈子沉稳了不少，虽然还是忍不住想提前布局", "知道未来的感觉很奇妙，像是开了上帝视角", "第一年最难的不是赚钱，是忍住不暴露自己"]
+      },
+      "choices": [
+        {
+          "key": "A",
+          "text": "2016年要加快步伐了",
+          "hint": "💬 [系统] 心急吃不了热豆腐。但你是重生者，你知道热豆腐在哪。",
+          "consequences": { "stress": 5 },
+          "narrative": "你在本子上写下了2016年的计划。BTC减半、房价暴涨……你知道接下来会发生什么。"
+        },
+        {
+          "key": "B",
+          "text": "不急，十年的棋，慢慢下",
+          "hint": "💬 [系统] 大智若愚。重生者最大的敌人不是市场，是自己的急躁。",
+          "consequences": { "stress": -10 },
+          "narrative": "你深呼一口气。十年很长，不必急在一时。"
+        }
+      ],
+      "weight": 0.5
+    }
+  ]
+}

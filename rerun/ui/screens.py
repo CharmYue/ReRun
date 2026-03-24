@@ -41,8 +41,8 @@ def _get_narrator_line(situation: str, lang: str = "cn") -> str:
     return ""
 
 
-def render_opening(renderer: GameRenderer) -> int:
-    """Render the opening screen and return the chosen preset (1/2/3)."""
+def render_opening(renderer: GameRenderer) -> tuple[int, str]:
+    """Render the opening screen. Returns (preset, gender)."""
     console = renderer.console
 
     console.print()
@@ -68,8 +68,32 @@ def render_opening(renderer: GameRenderer) -> int:
     console.print(f"  [dim]{DISCLAIMER}[/]")
     console.print()
 
+    # Gender selection
+    console.print("  欢迎回来，重生者。在开始之前——")
+    console.print()
+    console.print("  你的性别是？")
+    console.print("  [bold yellow][1][/] 男")
+    console.print("  [bold yellow][2][/] 女")
+    console.print()
+
+    gender = "male"
+    while True:
+        try:
+            raw = input("  性别 [1/2] > ").strip()
+        except (EOFError, KeyboardInterrupt):
+            raw = "1"
+        if raw == "1":
+            gender = "male"
+            break
+        elif raw == "2":
+            gender = "female"
+            break
+        console.print("  [red]请输入 1 或 2[/]")
+
+    console.print()
+
     # Preset selection
-    console.print("  先说说你自己吧：")
+    console.print("  再说说你的起点：")
     console.print()
     console.print("  [bold yellow][1][/] ¥30,000  （刚毕业，穷但有时间）")
     console.print("  [bold yellow][2][/] ¥80,000  （工作几年，有点积蓄）")
@@ -82,7 +106,7 @@ def render_opening(renderer: GameRenderer) -> int:
         except (EOFError, KeyboardInterrupt):
             raw = "2"
         if raw in ("1", "2", "3"):
-            return int(raw)
+            return int(raw), gender
         console.print("  [red]请输入 1、2 或 3[/]")
 
 

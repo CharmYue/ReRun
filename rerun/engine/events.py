@@ -96,6 +96,87 @@ def _load_event_pool(year: int) -> dict | None:
     return pool
 
 
+def is_event_applicable(tmpl: dict, state: PlayerState) -> bool:
+    """Check if an event template is applicable to the current player state.
+
+    Prevents showing BTC events to players without BTC, partner events to
+    single players, etc.
+    """
+    event_id = tmpl.get("id", "")
+    title = tmpl.get("title", "")
+    desc = tmpl.get("description_template", "")
+    combined = f"{event_id} {title} {desc}".lower()
+
+    # BTC-related events need BTC holdings (sell/crash/割肉)
+    btc_sell_keywords = ["卖btc", "卖出btc", "割肉", "btc暴跌要不要", "sell_btc", "btc_crash"]
+    if any(kw in combined for kw in btc_sell_keywords) and state.btc_amount <= 0:
+        return False
+
+    # Property events need properties
+    if ("卖房" in combined or "房贷" in combined) and state.properties <= 0:
+        return False
+
+    # Partner events need partner
+    if any(kw in combined for kw in ["伴侣", "另一半", "女朋友", "男朋友", "partner_conflict"]):
+        if "meet" not in combined and not state.has_partner:
+            return False
+
+    # Check requires field if present
+    requires = tmpl.get("requires", {})
+    for req_key, req_val in requires.items():
+        parts = req_key.split(".")
+        obj = state
+        for part in parts:
+            obj = getattr(obj, part, None)
+            if obj is None:
+                return False
+        if isinstance(req_val, (int, float)) and obj < req_val:
+            return False
+
+    return True
+
+
+def filter_choices_for_state(choices: list[Choice], state: PlayerState) -> list[Choice]:
+    """Filter out choices the player cannot afford or doesn't qualify for.
+
+    If a choice costs more than savings but player has BTC, add a warning.
+    Always keep at least one choice.
+    """
+    available_liquid = state.savings + state.btc_value + state.stocks
+
+    filtered = []
+    for c in choices:
+        # Check if savings consequence would make this unaffordable
+        cost = 0.0
+        for key, val in c.consequences.items():
+            if key == "savings" and isinstance(val, (int, float)) and val < 0:
+                cost = abs(val)
+
+        if cost > 0 and cost > available_liquid:
+            continue  # completely unaffordable, remove
+
+        if cost > 0 and cost > state.savings and state.btc_value > 0:
+            # Can afford but needs to sell BTC — add warning to text
+            c = c.model_copy(
+                update={"text": c.text + "\n      ⚠️ 存款不足，需要卖出部分 BTC"}
+            )
+
+        filtered.append(c)
+
+    # Always keep at least one option
+    if not filtered:
+        fallback = Choice(
+            key=choices[0].key if choices else "A",
+            text="咬牙撑过去",
+            hint="💬 [系统] 有时候，坚持就是最好的选择。",
+            consequences={"stress": 15},
+            narrative="你勒紧裤腰带，又熬过了一关。",
+        )
+        filtered.append(fallback)
+
+    return filtered
+
+
 def _check_milestone(check: str, state: PlayerState) -> bool:
     """Check if a milestone condition is met."""
     if check == "always":
@@ -139,6 +220,9 @@ def _build_event_from_pool_template(
             )
         )
 
+    # B3: Filter choices based on player state (affordability, etc.)
+    choices = filter_choices_for_state(choices, state)
+
     # Map sentiment to a category for compatibility
     category_map: dict[str, EventCategory] = {
         "positive": "social",
@@ -167,6 +251,70 @@ def _filter_by_gender(templates: list[dict], gender_value: str) -> list[dict]:
     ]
 
 
+def _build_2015_tutorial_events(pool: dict, state: PlayerState) -> list[GameEvent]:
+    """Build the fixed 2015 tutorial events with dynamic BTC calculations."""
+    from rerun.engine.state import get_btc_price
+
+    btc_price = get_btc_price(2015)
+    gender_val = state.gender.value if hasattr(state, "gender") else "male"
+    events: list[GameEvent] = []
+
+    for tmpl in pool.get("fixed_events", []):
+        # Gender filter
+        if tmpl.get("gender", "both") not in ("both", gender_val):
+            continue
+
+        # Build description
+        desc = tmpl["description_template"]
+
+        # Build choices with dynamic BTC amounts
+        choices: list[Choice] = []
+        for raw in tmpl["choices"]:
+            cons = dict(raw["consequences"])
+
+            # Special handling for BTC purchase event
+            if tmpl["id"] == "2015_btc_enlightenment":
+                if raw["key"] == "A":  # 梭哈
+                    btc_bought = state.savings / btc_price
+                    cons = {"savings": -state.savings, "btc_amount": btc_bought, "stress": 20}
+                    text = f"梭哈！把所有积蓄都买 BTC（约 {btc_bought:.1f} 个）"
+                elif raw["key"] == "B":  # 1万
+                    btc_bought = 10000 / btc_price
+                    cons = {"savings": -10000, "btc_amount": btc_bought, "stress": 5}
+                    text = f"拿 1 万块试试水（约 {btc_bought:.1f} 个）"
+                elif raw["key"] == "C":  # 3000
+                    btc_bought = 3000 / btc_price
+                    cons = {"savings": -3000, "btc_amount": btc_bought, "stress": 0}
+                    text = f"只买 3000 块的（约 {btc_bought:.1f} 个）"
+                else:
+                    text = raw["text"]
+            else:
+                text = raw["text"]
+
+            choices.append(Choice(
+                key=raw["key"],
+                text=text,
+                hint=raw["hint"],
+                consequences=cons,
+                narrative=raw["narrative"],
+            ))
+
+        # Filter choices by affordability
+        choices = filter_choices_for_state(choices, state)
+
+        events.append(GameEvent(
+            year=2015,
+            type="life",
+            category="market" if "btc" in tmpl["id"] else "family" if "family" in tmpl["id"] else "social",
+            title=tmpl["title"],
+            description=desc,
+            choices=choices,
+            template_id=tmpl["id"],
+        ))
+
+    return events
+
+
 def select_events_from_pool(
     year: int,
     state: PlayerState,
@@ -182,6 +330,10 @@ def select_events_from_pool(
     if pool is None:
         return []
 
+    # 2015 tutorial year: fixed events, not random
+    if pool.get("tutorial"):
+        return _build_2015_tutorial_events(pool, state)
+
     gender_val = state.gender.value if hasattr(state, "gender") else "male"
     events: list[GameEvent] = []
 
@@ -195,10 +347,10 @@ def select_events_from_pool(
             events.append(_build_event_from_pool_template(year, tmpl, state, "milestone"))
             break  # At most one milestone per year
 
-    # 2. Always pick 1 positive event (filtered by unused + gender)
+    # 2. Always pick 1 positive event (filtered by unused + gender + state)
     positive_candidates = [
         t for t in _filter_by_gender(pool.get("positive", []), gender_val)
-        if t.get("id", "") not in used_ids
+        if t.get("id", "") not in used_ids and is_event_applicable(t, state)
     ]
     if positive_candidates:
         weights = [t.get("weight", 1.0) for t in positive_candidates]
@@ -209,7 +361,7 @@ def select_events_from_pool(
     if consecutive_negative_years < 2 and random.random() < 0.4:
         negative_candidates = [
             t for t in _filter_by_gender(pool.get("negative", []), gender_val)
-            if t.get("id", "") not in used_ids
+            if t.get("id", "") not in used_ids and is_event_applicable(t, state)
         ]
         if negative_candidates:
             weights = [t.get("weight", 1.0) for t in negative_candidates]
@@ -220,7 +372,7 @@ def select_events_from_pool(
     if random.random() < 0.3:
         opp_candidates = [
             t for t in _filter_by_gender(pool.get("opportunity", []), gender_val)
-            if t.get("id", "") not in used_ids
+            if t.get("id", "") not in used_ids and is_event_applicable(t, state)
         ]
         if opp_candidates:
             weights = [t.get("weight", 1.0) for t in opp_candidates]

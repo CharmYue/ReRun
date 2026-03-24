@@ -104,6 +104,9 @@ class PlayerState(BaseModel):
     monthly_expense: float = 5000.0
     mortgage_monthly: float = 0.0  # monthly mortgage payment (0 = no mortgage)
 
+    # --- Event chain flags ---
+    flags: dict = Field(default_factory=dict)
+
     # --- Records (for achievements & ending review) ---
     choices_log: list[dict] = Field(default_factory=list)
     achievements: list[str] = Field(default_factory=list)
@@ -113,6 +116,22 @@ class PlayerState(BaseModel):
     breakups: int = 0
 
     # --- Derived values ---
+
+    @property
+    def display_job_title(self) -> str:
+        """Dynamic job title based on years working and career level."""
+        if not self.is_employed:
+            return "待业中"
+        years_working = self.year - YEAR_START
+        if years_working == 0:
+            return self.job_title  # keep preset title in first year
+        if years_working <= 2:
+            return "职场新人"
+        if self.career_level >= 4:
+            return "资深从业者"
+        if self.career_level >= 3:
+            return "业务骨干"
+        return "普通白领"
 
     @property
     def net_worth(self) -> float:
@@ -237,6 +256,31 @@ class PlayerState(BaseModel):
         new_log = [*self.choices_log, entry]
         return self.model_copy(update={"choices_log": new_log})
 
+    def apply_salary_growth(self) -> tuple[PlayerState, float]:
+        """Apply annual salary growth. Returns (new_state, raise_amount).
+
+        Growth: 5-10% base + career bonus + industry boom/bust.
+        """
+        import random
+
+        if not self.is_employed:
+            return self, 0.0
+
+        base_rate = random.uniform(0.05, 0.10)
+        # Career level bonus
+        if self.career_level >= 3:
+            base_rate += 0.05
+        # Industry boom/bust by year
+        boom = {2017: 0.05, 2020: -0.03, 2021: 0.08, 2023: 0.10}
+        base_rate += boom.get(self.year, 0)
+        base_rate = max(base_rate, 0)  # floor at 0
+
+        old_salary = self.monthly_salary
+        new_salary = int(old_salary * (1 + base_rate))
+        raise_amount = new_salary - old_salary
+        new_state = self.model_copy(update={"monthly_salary": float(new_salary)})
+        return new_state, raise_amount
+
     def settle_year(self) -> PlayerState:
         """Apply annual salary/expense settlement and advance to next year."""
         new_savings = self.savings + self.annual_net_income
@@ -244,8 +288,6 @@ class PlayerState(BaseModel):
             update={
                 "savings": new_savings,
                 "year": self.year + 1,
-                # Note: mortgage_monthly persists, monthly_expense is now
-                # superseded by calculate_annual_costs() for actual deductions
             }
         )
 

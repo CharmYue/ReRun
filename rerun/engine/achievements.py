@@ -134,31 +134,44 @@ def _check_exposed(state: PlayerState, initial_savings: float) -> bool:
     return state.reputation > 90
 
 
-# Map achievement IDs to checker functions
-_CHECKERS: dict[str, callable] = {
+# Achievement timing: "realtime" = check during gameplay, "endgame" = check only at end
+_REALTIME_CHECKERS: dict[str, callable] = {
     "diamond_hands": _check_diamond_hands,
-    "clown": _check_clown,
     "landlord": _check_landlord,
     "tenbagger": _check_tenbagger,
-    "paper_hands": _check_paper_hands,
     "bottom_fisher": _check_bottom_fisher,
     "life_winner": _check_life_winner,
-    "heartbreaker": _check_heartbreaker,
-    "zen_master": _check_zen_master,
-    "regret": _check_regret,
     "filial_child": _check_filial_child,
+    "storyteller": _check_storyteller,
+}
+
+_ENDGAME_CHECKERS: dict[str, callable] = {
+    "clown": _check_clown,          # "小丑" — only meaningful at end
+    "paper_hands": _check_paper_hands,
+    "heartbreaker": _check_heartbreaker,
+    "zen_master": _check_zen_master,  # "佛系" — needs full game history
+    "regret": _check_regret,          # "意难平" — only meaningful at end
     "lone_wolf": _check_lone_wolf,
     "prophet": _check_prophet,
-    "storyteller": _check_storyteller,
     "phoenix": _check_phoenix,
     "exposed": _check_exposed,
 }
 
+# Combined for any code that needs all
+_ALL_CHECKERS: dict[str, callable] = {**_REALTIME_CHECKERS, **_ENDGAME_CHECKERS}
 
-def check_achievements(state: PlayerState, initial_savings: float) -> list[str]:
-    """Check all achievements and return list of newly unlocked IDs."""
+
+def check_achievements(
+    state: PlayerState, initial_savings: float, *, endgame: bool = False
+) -> list[str]:
+    """Check achievements and return list of newly unlocked IDs.
+
+    Args:
+        endgame: If True, check all achievements. If False, only realtime ones.
+    """
+    checkers = _ALL_CHECKERS if endgame else _REALTIME_CHECKERS
     newly_unlocked = []
-    for ach_id, checker in _CHECKERS.items():
+    for ach_id, checker in checkers.items():
         if ach_id in state.achievements:
             continue
         try:
@@ -169,9 +182,15 @@ def check_achievements(state: PlayerState, initial_savings: float) -> list[str]:
     return newly_unlocked
 
 
-def apply_achievements(state: PlayerState, initial_savings: float) -> tuple[PlayerState, list[str]]:
-    """Check and unlock all earned achievements. Returns (new_state, newly_unlocked)."""
-    newly = check_achievements(state, initial_savings)
+def apply_achievements(
+    state: PlayerState, initial_savings: float, *, endgame: bool = False
+) -> tuple[PlayerState, list[str]]:
+    """Check and unlock earned achievements. Returns (new_state, newly_unlocked).
+
+    Args:
+        endgame: If True, check all achievements (including endgame-only ones).
+    """
+    newly = check_achievements(state, initial_savings, endgame=endgame)
     new_state = state
     for ach_id in newly:
         new_state = new_state.unlock_achievement(ach_id)

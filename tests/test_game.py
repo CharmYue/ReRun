@@ -29,11 +29,12 @@ class TestYearStart:
     def test_year_start_data(self):
         engine = _make_engine()
         engine.init_player(2)
-        ys = engine.get_year_start()
+        ys, salary_raise = engine.get_year_start()
         assert ys.year == 2015
         assert ys.btc_price == 1800
         assert ys.background != ""
         assert ys.state.savings == 80000.0
+        assert salary_raise == 0.0  # no raise in first year
 
 
 class TestEventGeneration:
@@ -97,7 +98,7 @@ class TestGameFlow:
         years_played = 0
         while not engine.is_game_over():
             # Year start
-            ys = engine.get_year_start()
+            ys, _ = engine.get_year_start()
             assert ys.year == engine.state.year
 
             # Events

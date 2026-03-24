@@ -35,7 +35,7 @@ def test_display_unknown_achievement():
 
 def test_clown_lost_money():
     state = _make_state(savings=10_000, year=2025)
-    unlocked = check_achievements(state, initial_savings=80_000)
+    unlocked = check_achievements(state, initial_savings=80_000, endgame=True)
     assert "clown" in unlocked
 
 
@@ -65,7 +65,7 @@ def test_tenbagger():
 
 def test_paper_hands():
     state = _make_state(times_sold_btc=3)
-    unlocked = check_achievements(state, initial_savings=80_000)
+    unlocked = check_achievements(state, initial_savings=80_000, endgame=True)
     assert "paper_hands" in unlocked
 
 
@@ -98,19 +98,19 @@ def test_life_winner_missing_partner():
 
 def test_heartbreaker():
     state = _make_state(breakups=2)
-    unlocked = check_achievements(state, initial_savings=80_000)
+    unlocked = check_achievements(state, initial_savings=80_000, endgame=True)
     assert "heartbreaker" in unlocked
 
 
 def test_zen_master():
     state = _make_state(stress=30)
-    unlocked = check_achievements(state, initial_savings=80_000)
+    unlocked = check_achievements(state, initial_savings=80_000, endgame=True)
     assert "zen_master" in unlocked
 
 
 def test_regret():
     state = _make_state(savings=100_000, year=2025)
-    unlocked = check_achievements(state, initial_savings=80_000)
+    unlocked = check_achievements(state, initial_savings=80_000, endgame=True)
     assert "regret" in unlocked
 
 
@@ -122,13 +122,13 @@ def test_filial_child():
 
 def test_lone_wolf():
     state = _make_state(has_partner=False, social=20)
-    unlocked = check_achievements(state, initial_savings=80_000)
+    unlocked = check_achievements(state, initial_savings=80_000, endgame=True)
     assert "lone_wolf" in unlocked
 
 
 def test_exposed():
     state = _make_state(reputation=95)
-    unlocked = check_achievements(state, initial_savings=80_000)
+    unlocked = check_achievements(state, initial_savings=80_000, endgame=True)
     assert "exposed" in unlocked
 
 
@@ -186,7 +186,8 @@ def test_apply_achievements_no_duplicate():
 
 def test_apply_achievements_multiple():
     state = _make_state(properties=3, reputation=95, stress=30)
-    new_state, unlocked = apply_achievements(state, initial_savings=80_000)
+    # endgame=True to check all achievement types
+    new_state, unlocked = apply_achievements(state, initial_savings=80_000, endgame=True)
     assert "landlord" in unlocked
     assert "exposed" in unlocked
     assert "zen_master" in unlocked

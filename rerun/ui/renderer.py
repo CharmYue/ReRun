@@ -18,12 +18,23 @@ SEPARATOR = "━" * 52
 
 
 def _fmt_money(val: float) -> str:
-    """Format money value with ¥ prefix."""
-    if abs(val) >= 1_0000_0000:
-        return f"¥{val / 1_0000_0000:,.2f}亿"
-    if abs(val) >= 1_0000:
-        return f"¥{val:,.0f}"
-    return f"¥{val:,.0f}"
+    """Format money value — 万/亿 units so users don't have to count zeros.
+
+    Spec E1: <1万 show raw, 1万-1亿 show X.X万, >=1亿 show X.X亿.
+    """
+    if val == 0:
+        return "¥0"
+    neg = val < 0
+    a = abs(val)
+    if a < 10000:
+        s = f"¥{a:,.0f}"
+    elif a < 1_0000_0000:
+        wan = a / 10000
+        s = f"¥{wan:.1f}万" if wan != int(wan) else f"¥{int(wan)}万"
+    else:
+        yi = a / 1_0000_0000
+        s = f"¥{yi:.1f}亿"
+    return f"-{s}" if neg else s
 
 
 class GameRenderer:
@@ -58,7 +69,7 @@ class GameRenderer:
         """Render the current player state as a compact panel."""
         btc_price = get_btc_price(state.year)
         btc_val = state.btc_amount * btc_price
-        job = state.job_title if state.is_employed else "无业"
+        job = state.display_job_title
 
         # Header bar
         header = f"  📅 {state.year} 年 | 💼 {job} | 💵 月薪 ¥{state.monthly_salary:,.0f}"
@@ -108,7 +119,9 @@ class GameRenderer:
     # Year start
     # ------------------------------------------------------------------
 
-    def render_year_start(self, ys: YearStart, prev_state: PlayerState | None = None) -> None:
+    def render_year_start(
+        self, ys: YearStart, prev_state: PlayerState | None = None, salary_raise: float = 0.0
+    ) -> None:
         """Render year start in two pages: macro context, then asset summary."""
 
         # ── 画面1: 年份转场 + 宏观大事件 ──
@@ -148,13 +161,13 @@ class GameRenderer:
                 f" [{color}]({sign}{ratio:.0f}%)[/]"
             )
 
-        # Salary income
+        # Salary income + raise display (B5)
         if ys.state.is_employed:
             annual_salary = ys.state.annual_salary_income
-            self.console.print(
-                f"  💵 月薪到账：¥{ys.state.monthly_salary:,.0f} × 12 ="
-                f" {_fmt_money(annual_salary)}"
-            )
+            salary_line = f"  💵 年收入：{_fmt_money(annual_salary)}（月薪 {_fmt_money(ys.state.monthly_salary)}）"
+            if salary_raise > 0:
+                salary_line += f"  [green]涨薪 +{_fmt_money(salary_raise)}/月[/]"
+            self.console.print(salary_line)
         else:
             self.console.print("  💵 收入：无业状态，无工资收入")
 
@@ -162,17 +175,17 @@ class GameRenderer:
         costs = ys.state.calculate_annual_costs()
         total_cost = sum(costs.values())
         cost_parts = " + ".join(f"{k} {_fmt_money(v)}" for k, v in costs.items())
-        self.console.print(f"  🏠 年度生活开支：-{_fmt_money(total_cost)}")
+        self.console.print(f"  🏠 年支出：{_fmt_money(total_cost)}")
         self.console.print(f"      [dim]（{cost_parts}）[/dim]")
 
-        # Net balance
+        # B1 fix: Net balance = income - cost, negative shown in red with minus sign
         net_income = ys.state.annual_net_income
-        net_color = "green" if net_income >= 0 else "red"
-        net_sign = "+" if net_income >= 0 else ""
-        self.console.print(
-            f"  📊 年度结余：[{net_color}]{net_sign}{_fmt_money(abs(net_income))}"
-            f"[/{net_color}]（不含投资收益）"
-        )
+        if net_income > 0:
+            self.console.print(f"  📊 年结余：[green]+{_fmt_money(net_income)}[/]")
+        elif net_income < 0:
+            self.console.print(f"  📊 年结余：[red]-{_fmt_money(abs(net_income))}[/]  ← [red]入不敷出[/]")
+        else:
+            self.console.print(f"  📊 年结余：[dim]¥0（刚好收支平衡）[/]")
 
         self.console.print()
         self.render_state_panel(ys.state)
@@ -183,9 +196,11 @@ class GameRenderer:
     # Event
     # ------------------------------------------------------------------
 
-    def render_event(self, event: GameEvent) -> None:
+    def render_event(self, event: GameEvent, event_index: int = 0, total_events: int = 0) -> None:
         """Render an event: description + choice options."""
-        self.console.print("  [bold]── 事件 ──────────────────────────────────[/]")
+        # E2: show year in event header
+        count_str = f" · 事件 {event_index}/{total_events}" if total_events > 0 else " · 事件"
+        self.console.print(f"  [bold]── 📅 {event.year} 年{count_str} ──────────────────────[/]")
         self.console.print()
         self._typewriter(f"  {event.title}")
         self.console.print()
@@ -201,15 +216,22 @@ class GameRenderer:
         self.console.print()
 
     def prompt_choice(self, valid_keys: list[str]) -> str:
-        """Prompt the player to make a choice. Returns validated key."""
+        """Prompt the player to make a choice. Accepts letters (A/B/C) or numbers (1/2/3)."""
+        # Build mapping: both letter keys and numeric indices
+        num_map: dict[str, str] = {}
+        for i, key in enumerate(valid_keys):
+            num_map[str(i + 1)] = key
+
         while True:
             keys_str = "/".join(valid_keys)
             try:
                 raw = input(f"  你的选择 [{keys_str}] > ").strip().upper()
             except (EOFError, KeyboardInterrupt):
-                raw = valid_keys[0]  # default to first on interrupt
+                raw = valid_keys[0]
             if raw in valid_keys:
                 return raw
+            if raw in num_map:
+                return num_map[raw]
             self.console.print(f"  [red]无效输入，请输入 {keys_str}[/]")
 
     # ------------------------------------------------------------------
@@ -339,16 +361,137 @@ class GameRenderer:
     # Year end
     # ------------------------------------------------------------------
 
-    def render_year_end(self, year: int, state: PlayerState) -> None:
-        """Render year-end summary line."""
-        self.console.print(f"  [dim]── {year}年结束 ── 净资产: {_fmt_money(state.net_worth)} ──[/]")
+    def render_year_end(
+        self, year: int, state: PlayerState, prev_state: PlayerState | None = None
+    ) -> None:
+        """Render year-end summary with key changes comparison."""
+        self.console.print()
+        self.console.print(f"  [bold]── 📊 {year} 年度总结 ──────────────────────[/]")
+        self.console.print()
+
+        if prev_state:
+            # Savings change
+            s_diff = state.savings - prev_state.savings
+            s_color = "green" if s_diff >= 0 else "red"
+            s_sign = "+" if s_diff >= 0 else ""
+            self.console.print(
+                f"  💰 存款    {_fmt_money(prev_state.savings)} → {_fmt_money(state.savings)}"
+                f"    [{s_color}]{s_sign}{_fmt_money(s_diff)}[/]"
+            )
+
+            # BTC line (if any)
+            if state.btc_amount > 0 or prev_state.btc_amount > 0:
+                btc_val = state.btc_value
+                self.console.print(
+                    f"  🪙 BTC     {prev_state.btc_amount:.1f}个 → {state.btc_amount:.1f}个"
+                    f"       💎 市值 {_fmt_money(btc_val)}"
+                )
+
+            # Salary change
+            if state.monthly_salary != prev_state.monthly_salary:
+                sal_diff = state.monthly_salary - prev_state.monthly_salary
+                sal_color = "green" if sal_diff >= 0 else "red"
+                self.console.print(
+                    f"  💵 月薪    {_fmt_money(prev_state.monthly_salary)} → {_fmt_money(state.monthly_salary)}"
+                    f"    [{sal_color}]涨薪 +{_fmt_money(sal_diff)}[/]"
+                )
+
+            # Stress
+            self.console.print(f"  😰 压力    {prev_state.stress}% → {state.stress}%")
+
+            # Net worth with change
+            nw_diff = state.net_worth - prev_state.net_worth
+            nw_color = "green" if nw_diff >= 0 else "red"
+            nw_sign = "+" if nw_diff >= 0 else ""
+            self.console.print()
+            self.console.print(f"  💎 净资产: [bold]{_fmt_money(state.net_worth)}[/]")
+            self.console.print(f"  📈 较去年: [{nw_color}]{nw_sign}{_fmt_money(nw_diff)}[/]")
+        else:
+            self.console.print(f"  💎 净资产: [bold]{_fmt_money(state.net_worth)}[/]")
+
+        self.console.print()
+        self.console.print(f"  [dim]── 按回车进入 {year + 1} 年 ──────────────────[/]")
+
+        self._wait_for_continue()
 
     # ------------------------------------------------------------------
     # Bankruptcy (Game Over)
     # ------------------------------------------------------------------
 
+    def render_survival_event(self, state: PlayerState) -> str:
+        """Render near-bankruptcy survival event. Returns choice: A/B/C."""
+        self.console.print()
+        self.console.print(f"[bold red]{SEPARATOR}[/]")
+        self.console.print("[bold red]  ⚠️ 紧急状态：你快撑不住了[/]")
+        self.console.print(f"[bold red]{SEPARATOR}[/]")
+        self.console.print()
+
+        self._typewriter("  你翻遍了所有口袋和账户。存款见底了。")
+
+        btc_val = state.btc_value
+        if state.btc_amount > 0:
+            self.console.print(
+                f"  但你的 BTC 钱包里还有 {state.btc_amount:.2f} 个 BTC，"
+                f"当前价值约 {_fmt_money(btc_val)}。"
+            )
+        self.console.print()
+        self._typewriter("  你必须做个决定：")
+        self.console.print()
+
+        options = []
+        if state.btc_amount > 0:
+            btc_price = get_btc_price(state.year)
+            needed = abs(state.savings) + 5000
+            btc_needed = min(state.btc_amount, needed / btc_price if btc_price > 0 else 0)
+            self.console.print(
+                f"  [bold yellow][A][/] 卖掉 {btc_needed:.2f} 个 BTC，够撑过这一年"
+            )
+            self.console.print(
+                f"      [dim italic]💬 [系统] 断臂求生。你知道 BTC 以后还会涨。但命比币重要。[/]"
+            )
+            options.append("A")
+
+        self.console.print(
+            "  [bold yellow][B][/] 搬回父母家，靠省钱硬扛"
+        )
+        self.console.print(
+            "      [dim italic]💬 [系统] 月支出降到 ¥1,500。自尊心受点伤，但钱包松了口气。[/]"
+        )
+        options.append("B")
+
+        if state.network >= 3:
+            self.console.print(
+                f"  [bold yellow][C][/] 找朋友借 {_fmt_money(abs(state.savings) + 10000)} 周转"
+            )
+            self.console.print(
+                "      [dim italic]💬 [系统] 你的人脉圈还够用。但欠人情的滋味不好受。[/]"
+            )
+            options.append("C")
+        else:
+            self.console.print(
+                "  [dim][C] 找朋友借钱 —— ⚠️ 你的朋友圈……不太有能借钱的人（需要人脉 Lv.3）[/]"
+            )
+
+        self.console.print()
+        self.console.print(
+            "  [cyan italic]💬 [系统] 重生者也会穷到吃土。[/]\n"
+            "  [cyan italic]   知道 BTC 能涨到 50 万，但今晚的外卖钱都没有。[/]\n"
+            "  [cyan italic]   这种反差，只有你能体会。[/]"
+        )
+        self.console.print()
+
+        while True:
+            keys_str = "/".join(options)
+            try:
+                raw = input(f"  你的选择 [{keys_str}] > ").strip().upper()
+            except (EOFError, KeyboardInterrupt):
+                raw = options[0]
+            if raw in options:
+                return raw
+            self.console.print(f"  [red]请输入 {keys_str}[/]")
+
     def render_bankruptcy(self, state: PlayerState) -> str:
-        """Render the bankruptcy screen. Returns player choice: R/N/Q."""
+        """Render the true bankruptcy screen (no assets left). Returns: R/N/Q."""
         self.console.print()
         self.console.print(f"[bold red]{SEPARATOR}[/]")
         self.console.print("[bold red]  💸 你的存款跌破了零...[/]")

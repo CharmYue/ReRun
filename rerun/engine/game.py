@@ -7,6 +7,7 @@ from dataclasses import dataclass
 
 from rerun.config import Settings
 from rerun.engine.achievements import apply_achievements, get_achievement_display
+from rerun.engine.chains import LAYOFF_FORESHADOW_2017, check_chain_events, set_flags_from_choice
 from rerun.engine.choices import (
     check_stat_triggers,
     get_choice,
@@ -116,8 +117,16 @@ class GameEngine:
         self.start_time = time.time()
         return self.state
 
-    def get_year_start(self) -> YearStart:
-        """Build the year-start presentation data."""
+    def get_year_start(self) -> tuple[YearStart, float]:
+        """Build the year-start presentation data. Also applies salary growth.
+
+        Returns (YearStart, salary_raise_amount).
+        """
+        # Apply annual salary growth (skip first year)
+        raise_amount = 0.0
+        if self.state.year > 2015:
+            self.state, raise_amount = self.state.apply_salary_growth()
+
         year = self.state.year
         return YearStart(
             year=year,
@@ -125,17 +134,21 @@ class GameEngine:
             background=get_year_background(year),
             btc_price=get_btc_price(year),
             year_context=get_year_context(year),
-        )
+        ), raise_amount
 
     def get_events_for_year(self) -> list[GameEvent]:
         """Generate events for the current year.
 
-        Uses the year-based event pool system first (v0.2).
-        Falls back to the legacy category-based system if no pool exists.
+        Priority: chain events (flag-driven) → pool events → legacy fallback.
         """
         year = self.state.year
+        events: list[GameEvent] = []
 
-        # Try new pool-based system first
+        # Step 5: Chain events first (flag-driven follow-ups)
+        chain_events = check_chain_events(self.state)
+        events.extend(chain_events)
+
+        # Pool-based events
         pool_events = select_events_from_pool(
             year,
             self.state,
@@ -144,7 +157,8 @@ class GameEngine:
         )
 
         if pool_events:
-            return pool_events
+            events.extend(pool_events)
+            return events
 
         # Fallback to legacy system
         num_events = self.tracker.events_for_year(year)
@@ -191,6 +205,9 @@ class GameEngine:
         new_state, unlocked = apply_achievements(new_state, self.initial_savings)
         unlocked_display = [get_achievement_display(a) for a in unlocked]
 
+        # Set event chain flags
+        new_state = set_flags_from_choice(new_state, event.template_id, choice_key)
+
         # Update engine state
         self.state = new_state
         self.state_history.append(self.state)
@@ -231,9 +248,51 @@ class GameEngine:
         """Check if the game has reached its final year."""
         return self.state.year > YEAR_END
 
-    def is_bankrupt(self) -> bool:
-        """Check if the player is bankrupt (net worth below zero)."""
-        return self.state.savings < 0 and self.state.net_worth < 0
+    def is_near_bankrupt(self) -> bool:
+        """Check if savings < 0 but player still has liquidatable assets."""
+        return (
+            self.state.savings < 0
+            and (self.state.btc_value > 0 or self.state.stocks > 0)
+        )
+
+    def is_truly_bankrupt(self) -> bool:
+        """Check if player is bankrupt with no way out."""
+        return self.state.savings < 0 and self.state.net_worth <= 0
+
+    def apply_survival_sell_btc(self) -> float:
+        """Sell minimum BTC needed to cover negative savings. Returns BTC sold."""
+        if self.state.btc_amount <= 0:
+            return 0.0
+        btc_price = get_btc_price(self.state.year)
+        needed = abs(self.state.savings) + 5000  # cover deficit + small buffer
+        btc_to_sell = min(self.state.btc_amount, needed / btc_price if btc_price > 0 else 0)
+        cny_received = btc_to_sell * btc_price
+        self.state = self.state.apply_consequences({
+            "savings": cny_received,
+            "btc_amount": -btc_to_sell,
+        })
+        return btc_to_sell
+
+    def apply_survival_move_home(self) -> None:
+        """Move back to parents' home — drastically reduce expenses."""
+        self.state = self.state.model_copy(update={
+            "savings": max(self.state.savings, 0) + 2000,  # parents help a bit
+            "monthly_expense": 1500.0,
+            "stress": min(100, self.state.stress + 20),
+            "relationship": min(100, self.state.relationship + 10),
+        })
+
+    def apply_survival_borrow(self) -> bool:
+        """Try to borrow money from friends. Requires network >= 3. Returns success."""
+        if self.state.network < 3:
+            return False
+        borrow_amount = abs(self.state.savings) + 10000
+        self.state = self.state.apply_consequences({
+            "savings": borrow_amount,
+            "social": -15,
+            "stress": 15,
+        })
+        return True
 
     def apply_bankruptcy_continue(self) -> None:
         """Reset to a low-income state for 'continue from bankruptcy' mode."""
@@ -246,7 +305,10 @@ class GameEngine:
         })
 
     def get_ending(self) -> GameEnding:
-        """Build the final settlement data."""
+        """Build the final settlement data. Also checks endgame achievements."""
+        # Check endgame-only achievements now
+        self.state, _ = apply_achievements(self.state, self.initial_savings, endgame=True)
+
         duration = time.time() - self.start_time if self.start_time else 0.0
         return GameEnding(
             state=self.state,
@@ -254,6 +316,12 @@ class GameEngine:
             initial_savings=self.initial_savings,
             baseline_net_worth=NO_RERUN_BASELINE,
         )
+
+    def get_foreshadow(self) -> str | None:
+        """Get any foreshadowing text for the current year."""
+        if self.state.year == 2017 and self.state.is_employed:
+            return LAYOFF_FORESHADOW_2017
+        return None
 
     def check_prophet(self) -> str | None:
         """Check if a prophet feedback should fire this year."""

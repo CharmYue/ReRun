@@ -29,6 +29,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Enable debug logging",
     )
     parser.add_argument(
+        "--record",
+        action="store_true",
+        help="Record game session to files (text + JSON) in ./records/",
+    )
+    parser.add_argument(
         "-v",
         "--version",
         action="store_true",
@@ -54,6 +59,8 @@ def main(argv: list[str] | None = None) -> None:
         overrides["game_language"] = Language(args.lang)
     if args.debug:
         overrides["debug"] = True
+    if args.record:
+        overrides["record"] = True
 
     settings = get_settings(**overrides)
 

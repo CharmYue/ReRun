@@ -33,7 +33,11 @@ desktop.ini
 
 # Game saves & local data
 saves/
+records/
 *.save.json
+
+# Spec & design docs (local only)
+spec/
 
 # Testing & coverage
 .coverage

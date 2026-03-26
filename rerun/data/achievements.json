@@ -25,9 +25,9 @@
       "emoji": "🏦",
       "name": "地主",
       "name_en": "Landlord",
-      "description": "拥有3套以上房产",
-      "description_en": "Owned 3+ properties",
-      "condition": "properties >= 3",
+      "description": "拥有2套以上房产",
+      "description_en": "Owned 2+ properties",
+      "condition": "properties >= 2",
       "hidden": false
     },
     {

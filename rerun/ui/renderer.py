@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from rich.console import Console
 from rich.table import Table
 
+from rerun.engine.achievements import get_achievement_display
 from rerun.engine.state import get_btc_price, get_property_price
 
 if TYPE_CHECKING:
@@ -45,9 +46,8 @@ class GameRenderer:
         self.speed = typewriter_speed
 
     def _typewriter(self, text: str) -> None:
-        from rerun.ui.effects import typewriter
-
-        typewriter(self.console, text, self.speed)
+        # V4 spec §五: disable typewriter effect, use direct print instead
+        self.console.print(text)
 
     # ------------------------------------------------------------------
     # Helpers
@@ -162,9 +162,12 @@ class GameRenderer:
             )
 
         # Salary income + raise display (B5)
-        if ys.state.is_employed:
+        if ys.state.has_income:
             annual_salary = ys.state.annual_salary_income
-            salary_line = f"  💵 年收入：{_fmt_money(annual_salary)}（月薪 {_fmt_money(ys.state.monthly_salary)}）"
+            if ys.state.is_self_employed:
+                salary_line = f"  💵 年收入：{_fmt_money(annual_salary)}（{ys.state.job_title}）"
+            else:
+                salary_line = f"  💵 年收入：{_fmt_money(annual_salary)}（月薪 {_fmt_money(ys.state.monthly_salary)}）"
             if salary_raise > 0:
                 salary_line += f"  [green]涨薪 +{_fmt_money(salary_raise)}/月[/]"
             self.console.print(salary_line)
@@ -287,6 +290,13 @@ class GameRenderer:
         }),
     }
 
+    # B6: Fields that should never be shown to the player
+    _HIDDEN_FIELDS = {
+        "flags", "choices_log", "achievements", "max_btc_held",
+        "times_sold_btc", "times_helped_family", "breakups",
+        "moved_home_count",
+    }
+
     def _render_state_changes(self, changes: dict) -> None:
         """Render state value changes with colors."""
         labels = {
@@ -309,6 +319,9 @@ class GameRenderer:
         skill_changes = {}
         normal_changes = {}
         for key, val in changes.items():
+            # B6: hide internal variables from player
+            if key in self._HIDDEN_FIELDS:
+                continue
             if key in self.SKILL_NAMES:
                 skill_changes[key] = val
             else:
@@ -407,6 +420,15 @@ class GameRenderer:
             self.console.print(f"  💎 净资产: [bold]{_fmt_money(state.net_worth)}[/]")
             self.console.print(f"  📈 较去年: [{nw_color}]{nw_sign}{_fmt_money(nw_diff)}[/]")
         else:
+            # First year: show breakdown so player can see BTC is included
+            self.console.print(f"  💰 存款    {_fmt_money(state.savings)}")
+            if state.btc_amount > 0:
+                btc_val = state.btc_value
+                self.console.print(
+                    f"  🪙 BTC     {state.btc_amount:.1f}个"
+                    f"       💎 市值 {_fmt_money(btc_val)}"
+                )
+            self.console.print()
             self.console.print(f"  💎 净资产: [bold]{_fmt_money(state.net_worth)}[/]")
 
         self.console.print()
@@ -418,7 +440,7 @@ class GameRenderer:
     # Bankruptcy (Game Over)
     # ------------------------------------------------------------------
 
-    def render_survival_event(self, state: PlayerState) -> str:
+    def render_survival_event(self, state: PlayerState, *, can_move_home: bool = True) -> str:
         """Render near-bankruptcy survival event. Returns choice: A/B/C."""
         self.console.print()
         self.console.print(f"[bold red]{SEPARATOR}[/]")
@@ -451,13 +473,19 @@ class GameRenderer:
             )
             options.append("A")
 
-        self.console.print(
-            "  [bold yellow][B][/] 搬回父母家，靠省钱硬扛"
-        )
-        self.console.print(
-            "      [dim italic]💬 [系统] 月支出降到 ¥1,500。自尊心受点伤，但钱包松了口气。[/]"
-        )
-        options.append("B")
+        # B5: only allow moving home once
+        if can_move_home:
+            self.console.print(
+                "  [bold yellow][B][/] 搬回父母家，靠省钱硬扛"
+            )
+            self.console.print(
+                "      [dim italic]💬 [系统] 月支出降到 ¥1,500。自尊心受点伤，但钱包松了口气。[/]"
+            )
+            options.append("B")
+        else:
+            self.console.print(
+                "  [dim][B] 搬回父母家 —— ⚠️ 你已经搬回去过一次了，不能再搬了[/]"
+            )
 
         if state.network >= 3:
             self.console.print(
@@ -533,80 +561,431 @@ class GameRenderer:
     # Ending
     # ------------------------------------------------------------------
 
-    def render_ending(self, ending: GameEnding, narrator_summary: str | None = None) -> None:
-        """Render the final settlement screen."""
+    # ------------------------------------------------------------------
+    # Ending — cinematic montage (5 phases)
+    # ------------------------------------------------------------------
+
+    def render_ending(self, ending: GameEnding, narrator_summary: str | None = None) -> str:
+        """Render the full cinematic ending. Returns menu choice: R/Q."""
         state = ending.state
-        minutes = int(ending.duration_seconds / 60)
 
+        # Phase 1: Montage
+        self._render_montage(state)
+
+        # Phase 2: Final scores
+        self._render_final_scores(ending)
+
+        # Phase 3: Achievements
+        self._render_achievements(state)
+
+        # Phase 4: System commentary
+        self._render_system_commentary(ending)
+
+        # Phase 5: Parallel lives + menu
+        return self._render_parallel_lives_and_menu(state)
+
+    # --- Phase 1: Montage ---
+
+    def _render_montage(self, state: PlayerState) -> None:
+        """Generate and display cinematic montage from game history."""
         self.console.print()
         self.console.print(f"[bold cyan]{SEPARATOR}[/]")
-        self.console.print("[bold cyan]  🔄 ReRun — 结算报告[/]")
-        self.console.print(f"[bold cyan]  📅 2015 → 2025 | 游戏时长: {minutes} 分钟[/]")
+        self.console.print("[bold cyan]  🔄 ReRun — 你的十年[/]")
         self.console.print(f"[bold cyan]{SEPARATOR}[/]")
-        self.console.print()
 
-        # Net worth
-        self.console.print(f"  [bold]💰 最终资产: {_fmt_money(state.net_worth)}[/]")
-        self.console.print()
+        snippets = self._generate_montage_snippets(state)
+        for snippet in snippets:
+            self.console.print()
+            for line in snippet.split("\n"):
+                self._typewriter(f"  {line}")
+            self._wait_for_continue()
 
-        # Asset breakdown table
-        table = Table(title="资产构成", border_style="cyan", padding=(0, 1))
-        table.add_column("类别", style="bold")
-        table.add_column("数值", justify="right")
+    def _generate_montage_snippets(self, state: PlayerState) -> list[str]:
+        """Pick the most important event per year and format as cinematic memories."""
+        # Group choices by year
+        by_year: dict[int, list[dict]] = {}
+        for entry in state.choices_log:
+            yr = entry.get("year", 0)
+            by_year.setdefault(yr, []).append(entry)
 
-        btc_val = state.btc_amount * get_btc_price(state.year)
-        prop_val = state.properties * get_property_price(state.year)
+        snippets: list[str] = []
 
-        table.add_row("🪙 BTC", _fmt_money(btc_val))
-        table.add_row("🏠 房产", _fmt_money(prop_val))
-        table.add_row("💰 存款", _fmt_money(state.savings))
-        table.add_row("📈 股票", _fmt_money(state.stocks))
-        table.add_row("─" * 10, "─" * 12)
-        table.add_row("[bold]💎 净资产[/]", f"[bold]{_fmt_money(state.net_worth)}[/]")
-        self.console.print(table)
-        self.console.print()
+        for year in range(2015, 2026):
+            entries = by_year.get(year, [])
+            snippet = self._format_year_snippet(year, entries, state)
+            if snippet:
+                snippets.append(snippet)
 
-        # You vs baseline
-        baseline = ending.baseline_net_worth
-        multiplier = state.net_worth / baseline if baseline > 0 else 0
-        bar_you = "█" * min(40, max(1, int(state.net_worth / baseline * 10)))
-        bar_base = "██"
-        self.console.print("  📊 你 vs 普通人（不穿越的基准线）")
-        self.console.print(f"  你的资产:   {_fmt_money(state.net_worth)}  [green]{bar_you}[/]")
-        self.console.print(f"  普通人资产: {_fmt_money(baseline)}  [dim]{bar_base}[/]")
-        self.console.print(f"  倍数: [bold]{multiplier:.1f}x[/]")
-        self.console.print()
+        # Ensure last snippet has ending feel
+        if snippets:
+            last = snippets[-1]
+            if "2025" in last and not last.endswith("。"):
+                last += "\n十年，就这样过完了。"
+                snippets[-1] = last
 
-        # Key choices review
-        if state.choices_log:
-            self.console.print("  [bold]── 关键抉择回顾 ──[/]")
-            for entry in state.choices_log:
-                self.console.print(
-                    f"  {entry['year']}: {entry['event_title']} → {entry['choice_text']}"
+        return snippets
+
+    def _format_year_snippet(
+        self, year: int, entries: list[dict], state: PlayerState
+    ) -> str | None:
+        """Format a single year's most important event as a montage snippet."""
+        if not entries:
+            # Generate context-based snippet for years without logged choices
+            return self._generate_contextual_snippet(year, state)
+
+        # Pick the most "dramatic" entry (highest abs consequence impact)
+        best = max(entries, key=lambda e: self._drama_score(e))
+        title = best.get("event_title", "")
+        choice_text = best.get("choice_text", "")
+        cons = best.get("consequences", {})
+
+        # Try pattern-based formatting first
+        snippet = self._match_montage_pattern(year, title, choice_text, cons, state)
+        if snippet:
+            return snippet
+
+        # Fallback: generic format from event data
+        return f"{year}年。{title}\n你选择了：{choice_text}"
+
+    def _drama_score(self, entry: dict) -> float:
+        """Score how dramatic/important a choice was."""
+        cons = entry.get("consequences", {})
+        score = 0.0
+        score += abs(cons.get("savings", 0)) / 10000
+        score += abs(cons.get("btc_amount", 0)) * 50
+        score += abs(cons.get("stress", 0))
+        score += abs(cons.get("properties", 0)) * 30
+        score += abs(cons.get("relationship", 0)) * 2
+        if cons.get("is_employed") is False:
+            score += 40
+        return score
+
+    def _match_montage_pattern(
+        self, year: int, title: str, choice_text: str, cons: dict, state: PlayerState
+    ) -> str | None:
+        """Match event to a cinematic montage template."""
+        title_lower = title.lower()
+        btc_price = get_btc_price(year)
+
+        # BTC purchase
+        if cons.get("btc_amount", 0) > 0:
+            btc_bought = cons["btc_amount"]
+            cost = abs(cons.get("savings", 0))
+            return (
+                f"{year}年。你花{_fmt_money(cost)}买了{btc_bought:.2f}个BTC。"
+                f"当时1个才¥{btc_price:,.0f}。\n"
+                f"没人觉得这是个好主意。除了你。"
+            )
+
+        # BTC sale
+        if cons.get("btc_amount", 0) < 0:
+            btc_sold = abs(cons["btc_amount"])
+            gain = cons.get("savings", 0)
+            return (
+                f"{year}年。你卖了{btc_sold:.2f}个BTC，收回{_fmt_money(gain)}。\n"
+                f"有人说你傻，有人说你聪明。你只是沉默。"
+            )
+
+        # Property purchase
+        if cons.get("properties", 0) > 0:
+            return (
+                f"{year}年。你买了房。首付交出去的那一刻，\n"
+                f"你觉得自己终于像个大人了。"
+            )
+
+        # Entrepreneurship (must check before layoff — both set is_employed=False)
+        if cons.get("is_employed") is False and ("创业" in choice_text or "自己干" in choice_text):
+            return (
+                f"{year}年。你辞了职，开始创业。\n"
+                f"从此，你的命运只属于自己。"
+            )
+
+        # Job loss / layoff
+        if cons.get("is_employed") is False or "裁" in title or "失业" in title:
+            return (
+                f"{year}年。你被裁了。拿了N+1走出大楼。\n"
+                f"阳光很好。你觉得……好像也没那么糟。"
+            )
+
+        # Job change / career
+        if "跳槽" in title or "工作" in title or cons.get("monthly_salary", 0) > 0:
+            salary = cons.get("monthly_salary", 0)
+            if salary > 0:
+                return (
+                    f"{year}年。你换了工作。月薪涨了{_fmt_money(salary)}。\n"
+                    f"你知道这个赛道的未来。"
                 )
-            self.console.print()
 
-        # Achievements
-        if state.achievements:
-            self.console.print("  [bold]── 🏆 成就 ──[/]")
-            for ach in state.achievements:
-                self.console.print(f"  {ach}")
-            self.console.print()
+        # Family help
+        if "家" in title or "妈" in title or "爸" in title or "亲" in title:
+            family_cost = abs(cons.get("savings", 0)) if cons.get("savings", 0) < 0 else 0
+            if family_cost > 0:
+                return (
+                    f"{year}年。家人需要{_fmt_money(family_cost)}。你没有犹豫。\n"
+                    f"有些账，不是用钱算的。"
+                )
+            if cons.get("relationship", 0) > 0:
+                return (
+                    f"{year}年。过年回家。一大桌子人。\n"
+                    f"你举起酒杯，觉得这一刻值得所有的辛苦。"
+                )
 
-        # Narrator summary
-        if narrator_summary:
-            self.console.print("  [bold]── 💡 系统总评 ──[/]")
-            self._typewriter(f"  {narrator_summary}")
-            self.console.print()
+        # Mask stockpile / COVID related
+        if "口罩" in title or "疫情" in title or "新冠" in title:
+            return (
+                f"{year}年。你做了一件所有人都觉得疯狂的事。\n"
+                f"后来证明，你是对的。"
+            )
 
+        # Romance
+        if "恋" in title or "感情" in title or "对象" in title or cons.get("has_partner") is True:
+            return (
+                f"{year}年。你遇到了一个人。\n"
+                f"在满脑子K线图的日子里，这是唯一让你心跳加速的事。"
+            )
+
+        # Breakup
+        if "分手" in title or cons.get("has_partner") is False:
+            return (
+                f"{year}年。你失去了一个人。\n"
+                f"你盯着屏幕上的数字，第一次觉得钱不能买到一切。"
+            )
+
+        # High stress events
+        if cons.get("stress", 0) >= 20:
+            return (
+                f"{year}年。压力大到失眠。\n"
+                f"你知道未来会好的。但身体不知道。"
+            )
+
+        return None
+
+    def _generate_contextual_snippet(self, year: int, state: PlayerState) -> str | None:
+        """Generate a snippet for years without specific logged choices."""
+        # Only generate for key context years, skip mundane ones
+        btc_price = get_btc_price(year)
+
+        if year == 2017 and state.btc_amount > 0:
+            val = state.btc_amount * btc_price
+            return (
+                f"{year}年。BTC涨到了¥{btc_price:,.0f}。你的持仓值{_fmt_money(val)}。\n"
+                f"所有人都在问你买了没。你面不改色：「没有。」"
+            )
+
+        if year == 2020:
+            return (
+                f"{year}年。世界停转了。\n"
+                f"你坐在家里，看着窗外空无一人的街道，\n"
+                f"觉得重生者的记忆从来没有这么沉重过。"
+            )
+
+        if year == 2025:
+            return (
+                f"{year}年。最后一年了。\n"
+                f"你站在阳台上，回想这十年走过的路。\n"
+                f"十年，就这样过完了。"
+            )
+
+        return None
+
+    # --- Phase 2: Final scores ---
+
+    def _render_final_scores(self, ending: GameEnding) -> None:
+        """Render the final asset summary."""
+        state = ending.state
+        self.console.print()
         self.console.print(f"[bold cyan]{SEPARATOR}[/]")
+        self.console.print()
+        self._typewriter("  十年结束了。")
+        self.console.print()
 
-    def render_ending_menu(self) -> str:
-        """Show post-ending menu and get choice."""
+        # Net worth headline
+        self.console.print(f"  💎 最终净资产: [bold]{_fmt_money(state.net_worth)}[/]")
+        multiplier = state.net_worth / ending.initial_savings if ending.initial_savings > 0 else 0
+        self.console.print(
+            f"  📈 起点 {_fmt_money(ending.initial_savings)}"
+            f" → 终点 {_fmt_money(state.net_worth)}"
+            f"（{multiplier:.1f}倍）"
+        )
         self.console.print()
-        self.console.print("  [bold yellow][R][/] 🔄 再来一次")
-        self.console.print("  [bold yellow][Q][/] 退出游戏")
+
+        # Comparison bar
+        baseline = ending.baseline_net_worth
+        bar_len_you = min(40, max(1, int(state.net_worth / max(baseline, 1) * 10)))
+        bar_len_base = max(1, min(40, int(10)))  # baseline is the "10" reference
+        bar_you = "█" * bar_len_you
+        bar_base = "██"
+        self.console.print("  ┌─────────────────────────────────────────┐")
+        self.console.print(
+            f"  │ 你的十年    [green]{bar_you}[/] {_fmt_money(state.net_worth)}"
+        )
+        self.console.print(
+            f"  │ 普通人的十年 [dim]{bar_base}[/] {_fmt_money(baseline)}"
+        )
+        self.console.print("  └─────────────────────────────────────────┘")
         self.console.print()
+
+        # Asset breakdown
+        self.console.print("          资产构成")
+        if state.savings != 0:
+            self.console.print(f"  💰 存款   {_fmt_money(state.savings)}")
+        if state.btc_amount > 0:
+            btc_val = state.btc_amount * get_btc_price(state.year)
+            self.console.print(f"  🪙 BTC    {state.btc_amount:.2f}个  {_fmt_money(btc_val)}")
+        if state.properties > 0:
+            prop_val = state.properties * get_property_price(state.year)
+            self.console.print(f"  🏠 房产   {state.properties}套  {_fmt_money(prop_val)}")
+        if state.stocks > 0:
+            self.console.print(f"  📈 股票   {_fmt_money(state.stocks)}")
+        self.console.print(f"  💎 总计   [bold]{_fmt_money(state.net_worth)}[/]")
+
+        self._wait_for_continue()
+
+    # --- Phase 3: Achievements ---
+
+    def _render_achievements(self, state: PlayerState) -> None:
+        """Render achievements: unlocked with full display, locked with just name."""
+        from rerun.engine.achievements import _load_achievements
+
+        all_achs = _load_achievements()
+        # Flatten all achievement entries
+        all_entries: list[dict] = []
+        for category in all_achs.values():
+            all_entries.extend(category)
+
+        unlocked = set(state.achievements)
+        unlocked_list = [a for a in all_entries if a["id"] in unlocked]
+        locked_list = [a for a in all_entries if a["id"] not in unlocked and not a.get("hidden")]
+
+        self.console.print()
+        self.console.print(f"[bold cyan]{SEPARATOR}[/]")
+        self.console.print()
+
+        if unlocked_list:
+            self.console.print(f"  🏆 你解锁了 {len(unlocked_list)} 个成就：")
+            self.console.print()
+            for ach in unlocked_list:
+                self.console.print(
+                    f"  {ach['emoji']} [{ach['name']}] — {ach['description']}"
+                )
+        else:
+            self.console.print("  🏆 你没有解锁任何成就。下次加油！")
+
+        if locked_list:
+            self.console.print()
+            locked_display = " ".join(f"🔒 [{a['name']}]" for a in locked_list)
+            self.console.print(f"  [dim]未解锁：{locked_display}[/]")
+
+        self._wait_for_continue()
+
+    # --- Phase 4: System commentary ---
+
+    def _render_system_commentary(self, ending: GameEnding) -> None:
+        """Generate and display personalized system commentary."""
+        state = ending.state
+        self.console.print()
+        self.console.print(f"[bold cyan]{SEPARATOR}[/]")
+        self.console.print()
+        self.console.print("  [bold]💬 [系统最终评价][/]")
+        self.console.print()
+
+        # Opening line
+        mult = state.net_worth / ending.initial_savings if ending.initial_savings > 0 else 0
+        self._typewriter(
+            f"  你用十年把{_fmt_money(ending.initial_savings)}"
+            f"变成了{_fmt_money(state.net_worth)}。"
+        )
+        self.console.print()
+
+        # What player did right
+        did_right: list[str] = []
+        if state.btc_amount > 0 and state.btc_value > 100_000:
+            did_right.append("在别人不懂的时候买了BTC")
+        if "diamond_hands" in state.achievements:
+            did_right.append("在所有人恐惧的时候拿住了")
+        if "bottom_fisher" in state.achievements:
+            did_right.append("在最恐慌的时候加仓")
+        if state.properties > 0:
+            did_right.append("买了房，有了自己的窝")
+        if state.has_partner:
+            did_right.append("找到了爱情")
+        if "filial_child" in state.achievements:
+            did_right.append("每次家人有难都帮了忙")
+        if state.career_level >= 4:
+            did_right.append("事业有成")
+        if mult >= 10:
+            did_right.append("资产翻了十倍以上")
+
+        if did_right:
+            self._typewriter("  你做对了很多事：" + "，\n  ".join(did_right) + "。")
+            self.console.print()
+
+        # What player missed
+        missed: list[str] = []
+        if state.properties == 0:
+            missed.append("你没有买房")
+        if not state.has_partner:
+            missed.append("没有谈恋爱")
+        if not state.is_employed and state.career_level < 3:
+            missed.append("后来甚至没有工作")
+        if state.stress >= 70:
+            missed.append("压力大到快要崩溃")
+        if state.btc_amount == 0 and state.flags.get("bought_btc_2015"):
+            missed.append("曾经拥有BTC，但全卖了")
+        if "clown" in state.achievements:
+            missed.append("知道未来还亏了钱")
+        if state.relationship < 30:
+            missed.append("和家人的关系越来越远")
+
+        if missed:
+            self._typewriter("  但你也错过了一些东西：")
+            self._typewriter("  " + "。".join(missed) + "。")
+            self.console.print()
+
+        # Closing reflection
+        if state.net_worth > 3_000_000:
+            self._typewriter("  作为重生者，你的财富线近乎完美。")
+            self._typewriter("  但人生不只有财富线。")
+        elif state.net_worth > ending.baseline_net_worth:
+            self._typewriter("  你比不穿越的自己活得好了一些。")
+            self._typewriter("  但「好一些」就够了吗？")
+        else:
+            self._typewriter("  你知道所有答案，却没拿到高分。")
+            self._typewriter("  也许，人生的考试从来不是开卷就能满分。")
+
+        self.console.print()
+        self._typewriter("  如果再来一次——你会做出不同的选择吗？")
+
+        self._wait_for_continue()
+
+    # --- Phase 5: Parallel lives + menu ---
+
+    def _render_parallel_lives_and_menu(self, state: PlayerState) -> str:
+        """Render parallel lives easter eggs and final menu. Returns R/Q."""
+        parallels = self._generate_parallel_lives(state)
+
+        if parallels:
+            self.console.print()
+            self.console.print(f"[bold cyan]{SEPARATOR}[/]")
+            self.console.print()
+            self.console.print("  [bold]🔮 [你没有体验到的平行人生][/]")
+            self.console.print()
+            for p in parallels:
+                self.console.print(f"  · {p}")
+                self.console.print()
+
+            self._typewriter("  💬 [系统] 每一个选择都通向一个不同的宇宙。")
+            self._typewriter("     你只活了其中一个。")
+
+            self._wait_for_continue()
+
+        # Final menu
+        self.console.print()
+        self.console.print(f"[bold cyan]{SEPARATOR}[/]")
+        self.console.print("  [bold yellow][R][/] 🔄 再来一次    [bold yellow][Q][/] 退出")
+        self.console.print(f"[bold cyan]{SEPARATOR}[/]")
+        self.console.print()
+
         while True:
             try:
                 raw = input("  > ").strip().upper()
@@ -615,3 +994,118 @@ class GameRenderer:
             if raw in ("R", "Q"):
                 return raw
             self.console.print("  [red]请输入 R 或 Q[/]")
+
+    def _generate_parallel_lives(self, state: PlayerState) -> list[str]:
+        """Generate parallel life hints based on choices the player DIDN'T make."""
+        parallels: list[str] = []
+        flags = state.flags
+
+        # --- BTC-related ---
+        if not flags.get("bought_btc_2015"):
+            parallels.append(
+                "如果你2015年买了BTC——\n"
+                "  到2025年，哪怕只买1个，也值70万。\n"
+                "  但你永远不会知道拿住有多难。"
+            )
+        elif flags.get("btc_choice_2015") == "all_in" and state.btc_amount > 0:
+            parallels.append(
+                "如果你当初只买了1万试试水——\n"
+                "  你不会经历2016年吃土的日子\n"
+                "  但你的最终资产也只有现在的三分之一"
+            )
+        elif flags.get("btc_choice_2015") in ("small", "moderate") and state.btc_amount > 0:
+            parallels.append(
+                "如果你2015年梭哈了——\n"
+                "  前两年会很苦，但到2025年\n"
+                "  你的BTC值" + _fmt_money(state.savings * 3) + "以上"
+            )
+
+        if flags.get("bought_btc_2015") and state.btc_amount > 0 and not flags.get("took_profit_2017"):
+            parallels.append(
+                "如果你2017年在高点卖了一半——\n"
+                "  2018年暴跌时你会睡得安稳很多\n"
+                "  但最终总资产会少一些"
+            )
+        elif flags.get("took_profit_2017"):
+            parallels.append(
+                "如果你2017年一个都没卖——\n"
+                "  2018年暴跌时你会承受巨大的压力\n"
+                "  但如果扛住了，最终回报会更高"
+            )
+
+        if flags.get("bought_btc_2015") and not flags.get("friends_know_btc"):
+            parallels.append(
+                "如果你2017年跟朋友坦白买了BTC——\n"
+                "  2018年会有朋友因为跟着你买亏钱来找你算账\n"
+                "  但2021年他们又会来感谢你"
+            )
+        elif flags.get("friends_know_btc"):
+            parallels.append(
+                "如果你一直保密——\n"
+                "  你不会失去那些朋友\n"
+                "  但「闷声发大财」的孤独，也是一种代价"
+            )
+
+        # --- Housing ---
+        if not flags.get("bought_house_2016") and state.properties == 0:
+            parallels.append(
+                "如果你2016年买了房——\n"
+                "  2024年它值150万，你妈逢人就夸你有远见\n"
+                "  但你的BTC仓位会少很多"
+            )
+        elif flags.get("bought_house_2016"):
+            parallels.append(
+                "如果你没买房，把钱都留给了BTC——\n"
+                "  你会多买好几个BTC\n"
+                "  但你妈可能到现在还在催你"
+            )
+
+        # --- Family ---
+        if not flags.get("helped_family_2015"):
+            parallels.append(
+                "如果你当年帮了表妹——\n"
+                "  2019年她毕业后会请你吃顿大餐\n"
+                "  那种温暖，比任何投资回报都真实"
+            )
+
+        # --- Career ---
+        if not flags.get("pivoted_to_ai_2018"):
+            parallels.append(
+                "如果你2018年转行做了AI——\n"
+                "  2023年ChatGPT爆发时，你是最抢手的人\n"
+                "  年薪80万的offer随便挑"
+            )
+        elif flags.get("pivoted_to_ai_2018"):
+            parallels.append(
+                "如果你2018年没转AI——\n"
+                "  2023年你会站在岸上看别人冲浪\n"
+                "  「现在学还来得及吗？」——来得及，但不容易"
+            )
+
+        # --- Romance ---
+        if not state.has_partner:
+            parallels.append(
+                "如果你谈了恋爱——\n"
+                "  存款会少很多，但2025年的团圆饭上\n"
+                "  不只有爸妈在等你"
+            )
+        elif state.has_partner and state.properties == 0:
+            partner = flags.get("partner_name", "TA")
+            parallels.append(
+                f"如果你们买了房——\n"
+                f"  每个月还贷的压力会让你失眠\n"
+                f"  但那是你和{partner}的家"
+            )
+
+        # --- Masks ---
+        if not flags.get("stockpiled_masks"):
+            parallels.append(
+                "如果你2019年囤了口罩——\n"
+                "  2020年你会成为全小区的英雄\n"
+                "  邻居叫你「小神仙」"
+            )
+
+        # Shuffle and pick 3 for variety
+        import random
+        random.shuffle(parallels)
+        return parallels[:3]

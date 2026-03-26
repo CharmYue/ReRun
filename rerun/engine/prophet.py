@@ -38,29 +38,13 @@ def _sold_btc_before_crash(state: PlayerState) -> bool:
 
 
 def _prepared_for_covid(state: PlayerState) -> bool:
-    """Player stockpiled masks or made preparations for COVID."""
-    # Check choices_log for mask-related choices
-    for entry in state.choices_log:
-        if "口罩" in entry.get("choice_text", "") or "stockpile" in entry.get("event_title", "").lower():
-            return True
-        if "masks" in entry.get("event_title", "").lower():
-            return True
-        if entry.get("event_title", "") == "【先知事件】有个奇怪的念头……":
-            if entry.get("choice_key") in ("A", "B"):
-                return True
-    return False
+    """Player stockpiled masks before COVID."""
+    return bool(state.flags.get("stockpiled_masks"))
 
 
 def _bet_on_ai_early(state: PlayerState) -> bool:
-    """Player invested in AI or learned AI skills before 2023."""
-    for entry in state.choices_log:
-        title = entry.get("event_title", "")
-        text = entry.get("choice_text", "")
-        if "AI" in title or "AI" in text:
-            return True
-        if "ai" in title.lower() or "人工智能" in text:
-            return True
-    return False
+    """Player pivoted to AI before 2023."""
+    return bool(state.flags.get("pivoted_to_ai_2018"))
 
 
 def _has_high_net_worth(state: PlayerState) -> bool:
@@ -93,13 +77,27 @@ def check_prophet_trigger(year: int, state: PlayerState) -> str | None:
 # Milestone celebration system
 # ---------------------------------------------------------------------------
 
+# B9: Milestone descriptions now depend on player state (has_partner etc.)
+# Each entry: (threshold, title, desc_with_partner, desc_without_partner)
 MILESTONES = [
-    (100_000, "十万俱乐部", "你比全国 70% 的同龄人有钱了"),
-    (500_000, "半百万", "首付够了...如果你想买房的话"),
-    (1_000_000, "百万富翁", "你是前 8% 了。但在上海，这也就刚够一套老破小"),
-    (5_000_000, "小目标的 1/200", "离王健林的小目标还差 199 个你"),
-    (10_000_000, "千万身家", "你可以在大部分城市实现财务自由了...如果你没有太太的话"),
-    (100_000_000, "一个亿！", "🎉 你实现了王健林的小目标！这不是演习！"),
+    (100_000, "十万俱乐部",
+     "你比全国 70% 的同龄人有钱了",
+     "你比全国 70% 的同龄人有钱了"),
+    (500_000, "半百万",
+     "首付够了...如果你想买房的话",
+     "首付够了...如果你想买房的话"),
+    (1_000_000, "百万富翁",
+     "你是前 8% 了。但在上海，这也就刚够一套老破小",
+     "你是前 8% 了。但在上海，这也就刚够一套老破小"),
+    (5_000_000, "小目标的 1/200",
+     "离王健林的小目标还差 199 个你",
+     "离王健林的小目标还差 199 个你"),
+    (10_000_000, "千万身家",
+     "你和另一半可以在大部分城市实现财务自由了",
+     "你可以在大部分城市实现财务自由了"),
+    (100_000_000, "一个亿！",
+     "🎉 你实现了王健林的小目标！这不是演习！",
+     "🎉 你实现了王健林的小目标！这不是演习！"),
 ]
 
 
@@ -113,11 +111,13 @@ def check_milestone(
     nw = state.net_worth
     new_reached = set(reached_milestones)
 
-    for threshold, title, description in MILESTONES:
+    for threshold, title, desc_partner, desc_no_partner in MILESTONES:
         if threshold in reached_milestones:
             continue
         if nw >= threshold:
             new_reached.add(threshold)
+            # B9: pick description based on relationship status
+            description = desc_partner if state.has_partner else desc_no_partner
             msg = (
                 f"\n  [bold yellow]{'━' * 40}[/]"
                 f"\n  [bold yellow]🎉 里程碑：{title}！[/]"

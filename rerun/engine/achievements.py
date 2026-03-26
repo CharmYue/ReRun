@@ -62,7 +62,7 @@ def _check_clown(state: PlayerState, initial_savings: float) -> bool:
 
 
 def _check_landlord(state: PlayerState, initial_savings: float) -> bool:
-    return state.properties >= 3
+    return state.properties >= 2
 
 
 def _check_tenbagger(state: PlayerState, initial_savings: float) -> bool:
@@ -161,6 +161,13 @@ _ENDGAME_CHECKERS: dict[str, callable] = {
 _ALL_CHECKERS: dict[str, callable] = {**_REALTIME_CHECKERS, **_ENDGAME_CHECKERS}
 
 
+# Mutually exclusive achievements — if one is unlocked, the other cannot be
+_MUTUALLY_EXCLUSIVE: dict[str, str] = {
+    "diamond_hands": "paper_hands",
+    "paper_hands": "diamond_hands",
+}
+
+
 def check_achievements(
     state: PlayerState, initial_savings: float, *, endgame: bool = False
 ) -> list[str]:
@@ -173,6 +180,10 @@ def check_achievements(
     newly_unlocked = []
     for ach_id, checker in checkers.items():
         if ach_id in state.achievements:
+            continue
+        # F6: Check mutual exclusion
+        conflict = _MUTUALLY_EXCLUSIVE.get(ach_id)
+        if conflict and conflict in state.achievements:
             continue
         try:
             if checker(state, initial_savings):

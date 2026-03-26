@@ -120,17 +120,24 @@ class PlayerState(BaseModel):
     @property
     def display_job_title(self) -> str:
         """Dynamic job title based on years working and career level."""
+        if self.is_self_employed:
+            return self.job_title
         if not self.is_employed:
             return "待业中"
+        # If job_title was set explicitly by an event (e.g. "跳槽成功"), use it for 1 year
+        # then revert to dynamic. Also keep preset titles for the first 2 years.
         years_working = self.year - YEAR_START
         if years_working == 0:
             return self.job_title  # keep preset title in first year
-        if years_working <= 2:
-            return "职场新人"
+        # Preset 3 starts with career_level=1 but salary=15K — don't downgrade their title
         if self.career_level >= 4:
             return "资深从业者"
-        if self.career_level >= 3:
+        if self.career_level >= 3 or self.monthly_salary >= 20000:
             return "业务骨干"
+        if self.monthly_salary >= 12000:
+            return "普通白领"
+        if years_working <= 2:
+            return "职场新人"
         return "普通白领"
 
     @property
@@ -184,9 +191,19 @@ class PlayerState(BaseModel):
         return sum(self.calculate_annual_costs().values())
 
     @property
+    def is_self_employed(self) -> bool:
+        """Check if player is an entrepreneur or freelancer (has income but not traditionally employed)."""
+        return self.job_title in ("AI 创业者", "自由职业者", "创业者")
+
+    @property
+    def has_income(self) -> bool:
+        """Check if player has any income (employed, freelance, or entrepreneur)."""
+        return self.is_employed or self.is_self_employed
+
+    @property
     def annual_salary_income(self) -> float:
-        """Annual salary income (0 if unemployed)."""
-        if not self.is_employed:
+        """Annual salary income (0 if unemployed and not self-employed)."""
+        if not self.has_income:
             return 0.0
         return self.monthly_salary * 12
 
@@ -263,7 +280,7 @@ class PlayerState(BaseModel):
         """
         import random
 
-        if not self.is_employed:
+        if not self.has_income:
             return self, 0.0
 
         base_rate = random.uniform(0.05, 0.10)
@@ -323,6 +340,8 @@ STARTING_PRESETS: dict[int, dict] = {
         "job_title": "小有成就的白领",
         "has_partner": True,
         "relationship": 60,
+        "properties": 1,
+        "mortgage_monthly": 5000.0,
     },
 }
 

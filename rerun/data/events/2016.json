@@ -97,9 +97,9 @@
       "choices": [
         {
           "key": "A",
-          "text": "加仓！减半后必涨",
+          "text": "加仓！减半后必涨（花 1 万买入）",
           "hint": "💬 [系统] 减半效应，你比任何人都清楚。2017年的疯牛，就在前方。",
-          "consequences": { "stress": 10 },
+          "consequences": { "savings": -10000, "btc_amount": 2.22, "stress": 10 },
           "narrative": "你果断加仓。同事们觉得你疯了。你微微一笑——等着瞧。"
         },
         {

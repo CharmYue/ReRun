@@ -169,14 +169,14 @@
           "key": "B",
           "text": "恐慌卖出一部分",
           "hint": "💬 [系统] 你明明知道会涨回来……但恐惧这东西不讲道理。",
-          "consequences": { "stress": 25 },
+          "consequences": { "btc_amount": -2.0, "savings": 100000, "stress": 25 },
           "narrative": "你在恐慌中卖出了一些。等到价格涨回来，你肠子都悔青了。知识抵不过情绪。"
         },
         {
           "key": "C",
-          "text": "趁暴跌加仓！",
+          "text": "趁暴跌加仓！（花 2 万买入）",
           "hint": "💬 [系统] 别人恐惧我贪婪。你是在践行巴菲特，还是在利用开挂？管它呢。",
-          "consequences": { "stress": 15 },
+          "consequences": { "savings": -20000, "btc_amount": 0.4, "stress": 15 },
           "narrative": "你在最恐慌的时候加仓了。两个月后，你的这笔抄底翻了倍。你默默给自己竖了个大拇指。"
         }
       ],
@@ -197,7 +197,7 @@
           "key": "A",
           "text": "卖出大部分，只留一点底仓",
           "hint": "💬 [系统] 落袋为安。2018年的惨跌你记忆犹新。聪明人在别人疯狂的时候离场。",
-          "consequences": { "stress": -15 },
+          "consequences": { "stress": -15, "_action": "sell_btc_80pct" },
           "narrative": "你在高位卖出了大部分BTC。看着银行账户上的数字，你终于感到了真实的安全感。纸面富贵变成了真金白银。"
         },
         {
@@ -211,7 +211,7 @@
           "key": "C",
           "text": "全部卖出，彻底落袋",
           "hint": "💬 [系统] 激进但聪明。2018年暴跌之后你可以在底部全部接回来。",
-          "consequences": { "stress": -20 },
+          "consequences": { "stress": -20, "_action": "sell_btc_all" },
           "narrative": "你清仓了。账户余额让你感觉像是做了一场梦。但这不是梦，这是你应得的。"
         }
       ],

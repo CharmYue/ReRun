@@ -139,12 +139,28 @@ class GameEngine:
     def get_events_for_year(self) -> list[GameEvent]:
         """Generate events for the current year.
 
-        Priority: chain events (flag-driven) → pool events → legacy fallback.
+        V4 priority: event_map (flag-driven) → chain events → pool events → legacy fallback.
         """
+        from rerun.engine.event_map import build_year_events
+
         year = self.state.year
+
+        # V4: Try the new event map system first (2015-2017 for now)
+        map_events = build_year_events(year, self.state)
+        if map_events is not None:
+            # Also prepend any chain events for this year
+            chain_events = check_chain_events(self.state)
+            # Deduplicate: don't add chain events whose template_id is already in map
+            map_ids = {e.template_id for e in map_events}
+            for ce in chain_events:
+                if ce.template_id not in map_ids:
+                    map_events.insert(0, ce)
+            return map_events[:3]  # max 3 events per year
+
+        # --- Legacy system for years not yet in event map ---
         events: list[GameEvent] = []
 
-        # Step 5: Chain events first (flag-driven follow-ups)
+        # Chain events first (flag-driven follow-ups)
         chain_events = check_chain_events(self.state)
         events.extend(chain_events)
 
@@ -165,7 +181,7 @@ class GameEngine:
         triggers = check_stat_triggers(self.state)
         forced = get_forced_categories(triggers)
 
-        events: list[GameEvent] = []
+        events = []
         for i in range(num_events):
             exclude = self.tracker.exclude_categories
             if i == 0 and forced:
@@ -187,6 +203,11 @@ class GameEngine:
                 events.append(event)
 
         return events
+
+    def prepare_event(self, event: GameEvent) -> GameEvent:
+        """Prepare an event for rendering — rebuild dynamic events based on current state."""
+        from rerun.engine.event_map import rebuild_family_event_if_broke
+        return rebuild_family_event_if_broke(event, self.state)
 
     def present_event(self, event: GameEvent) -> EventPresentation:
         """Build the event presentation data."""
@@ -222,6 +243,20 @@ class GameEngine:
             new_state=new_state,
             unlocked_achievements=unlocked_display,
         )
+
+    def check_hospitalization(self) -> dict | None:
+        """B4: Check if stress >= 90 triggers forced hospitalization.
+
+        Returns a dict with details if hospitalized, None otherwise.
+        """
+        if self.state.stress >= 90:
+            medical_cost = 30000
+            self.state = self.state.apply_consequences({
+                "savings": -medical_cost,
+                "stress": -40,  # hospitalization reduces stress to ~50
+            })
+            return {"medical_cost": medical_cost, "new_stress": self.state.stress}
+        return None
 
     def settle_year(self, year_events: list[GameEvent] | None = None) -> YearEnd:
         """Settle the year-end: apply income/expense, advance year."""
@@ -273,13 +308,20 @@ class GameEngine:
         })
         return btc_to_sell
 
+    def can_move_home(self) -> bool:
+        """B5: Check if player can still move home (max 1 time)."""
+        return self.state.flags.get("moved_home_count", 0) < 1
+
     def apply_survival_move_home(self) -> None:
-        """Move back to parents' home — drastically reduce expenses."""
+        """Move back to parents' home — drastically reduce expenses. B5: max 1 time."""
+        new_flags = dict(self.state.flags)
+        new_flags["moved_home_count"] = new_flags.get("moved_home_count", 0) + 1
         self.state = self.state.model_copy(update={
             "savings": max(self.state.savings, 0) + 2000,  # parents help a bit
             "monthly_expense": 1500.0,
             "stress": min(100, self.state.stress + 20),
             "relationship": min(100, self.state.relationship + 10),
+            "flags": new_flags,
         })
 
     def apply_survival_borrow(self) -> bool:
@@ -306,6 +348,11 @@ class GameEngine:
 
     def get_ending(self) -> GameEnding:
         """Build the final settlement data. Also checks endgame achievements."""
+        # Fix: settle_year() advanced year to 2026, but price tables only go to 2025.
+        # Reset year to YEAR_END so net_worth / btc_value calculations use correct prices.
+        if self.state.year > YEAR_END:
+            self.state = self.state.model_copy(update={"year": YEAR_END})
+
         # Check endgame-only achievements now
         self.state, _ = apply_achievements(self.state, self.initial_savings, endgame=True)
 

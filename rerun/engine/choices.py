@@ -55,7 +55,31 @@ def process_choice(
     if choice is None:
         return state, {}
 
-    consequences = choice.consequences
+    consequences = dict(choice.consequences)
+
+    # B1: Handle special _action commands for BTC buy/sell
+    action = consequences.pop("_action", None)
+    if action:
+        btc_price = get_btc_price(state.year)
+        if action == "sell_btc_80pct" and state.btc_amount > 0 and btc_price > 0:
+            sell_amount = state.btc_amount * 0.8
+            consequences["btc_amount"] = -sell_amount
+            consequences["savings"] = consequences.get("savings", 0) + sell_amount * btc_price
+        elif action == "sell_btc_all" and state.btc_amount > 0 and btc_price > 0:
+            sell_amount = state.btc_amount
+            consequences["btc_amount"] = -sell_amount
+            consequences["savings"] = consequences.get("savings", 0) + sell_amount * btc_price
+        elif action == "sell_btc_50pct" and state.btc_amount > 0 and btc_price > 0:
+            sell_amount = state.btc_amount * 0.5
+            consequences["btc_amount"] = -sell_amount
+            consequences["savings"] = consequences.get("savings", 0) + sell_amount * btc_price
+        elif action.startswith("buy_btc_") and btc_price > 0:
+            # buy_btc_10000 → spend 10000 CNY on BTC
+            amount_cny = float(action.split("_")[-1])
+            amount_cny = min(amount_cny, state.savings)
+            if amount_cny > 0:
+                consequences["btc_amount"] = consequences.get("btc_amount", 0) + amount_cny / btc_price
+                consequences["savings"] = consequences.get("savings", 0) - amount_cny
 
     # Snapshot old values for change display
     old_values = {}

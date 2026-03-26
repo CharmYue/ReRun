@@ -38,6 +38,9 @@ class Settings(BaseSettings):
     game_language: Language = Language.CN
     typewriter_speed: float = Field(default=0.03, ge=0.0)
 
+    # --- Recording ---
+    record: bool = False
+
     # --- Debug ---
     debug: bool = False
 

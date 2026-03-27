@@ -1,94 +1,185 @@
-# ReRun — Relive Your Life
+# 🔄 ReRun — 穿越回 2015，你能改写命运吗？
 
-> You wake up. Your phone says January 1, 2015.
-> You remember everything — Bitcoin, COVID, ChatGPT.
-> This time, you'll get it right... right?
+> 你带着 10 年的未来记忆重生到 2015 年。BTC 才 1800 块，房价还没起飞，ChatGPT 还要 7 年才出现。
+> 这一次，你要把每一个让你拍断大腿的瞬间全部抓住。
+> 
+> 但知道答案和拿到分数之间，隔着一整个人生。
+![demo](docs/demo.gif)
+image.png
+image.png
+```bash
+# 一行命令开始你的第二人生
+pip install rerun-life
+rerun
+```
 
-**ReRun** is a roguelike life simulator played in the terminal. You travel back to 2015 with 10 years of future knowledge and make choices that shape your destiny through real historical events.
+## 这是什么？
 
-<!-- ![demo](docs/demo.gif) -->
+ReRun 是一个 **AI 驱动的人生 Roguelike 模拟器**。你扮演一个穿越回 2015 年的重生者，在真实历史时间线上做出选择——买不买 BTC、要不要在房价起飞前买房、囤不囤口罩、追不追 AI 浪潮——每个选择都会影响你接下来 10 年的人生轨迹。
 
-## Features
+**真实数据 × AI 叙事 × Roguelike 选择 = 你从未玩过的人生模拟器**
 
-- **10 years of real history** (2015-2025): Bitcoin booms & crashes, COVID, AI revolution
-- **Meaningful choices** with real trade-offs — no obvious best option
-- **16 achievements** across investment, life, and hidden categories
-- **Rich terminal UI** with emoji, color panels, typewriter effects
-- **AI-powered events** via OpenAI (optional) — or play fully offline
-- **Snarky narrator** that breaks the fourth wall
-- **Replayable** — different choices, different events, different endings
+### ✨ 特色
 
-## Quick Start
+- 🪙 **真实历史数据** — BTC 价格、COVID 时间线、AI 浪潮，全部基于真实历史
+- 🔀 **每次 Run 都不同** — 30+ 个 flag 驱动的事件链，你的选择真的会影响后续剧情
+- 🎭 **有人格的旁白** — 系统不是冷冰冰的数值面板，而是一个会吐槽你的毒舌旁白
+- 🎬 **电影式结局** — 十年回放蒙太奇 + 成就系统 + "你没有体验到的平行人生"
+- 🏆 **15+ 成就** — 钻石手、抄底王、先知、小丑……你能解锁几个？
+
+### 🎮 一局大概长这样
+
+```
+2015年。你花 ¥3万 买了 16.67 个 BTC。当时 1 个才 ¥1,800。
+没人觉得这是个好主意。除了你。
+
+    ↓
+
+2017年。BTC 涨到 ¥130,000。你的持仓值 ¥156 万。
+老王问你买了没。你面不改色：「没有。」
+
+    ↓
+
+2019年。你花 ¥5万 囤了几万只口罩。
+快递小哥看你的眼神像在看疯子。
+
+    ↓
+
+2020年。武汉封城。你成了全小区唯一有口罩的人。
+邻居叫你"小神仙"。
+
+    ↓
+
+2025年。过年。你举起酒杯：「敬爸妈。这十年，谢谢你们。」
+
+💎 最终净资产: ¥4,408 万（起点 ¥3 万，涨了 1,469 倍）
+```
+
+## 🚀 快速开始
+
+### 方式一：pip 安装（推荐）
 
 ```bash
+pip install rerun-life
+rerun
+```
+
+### 方式二：从源码运行
+
+```bash
+git clone https://github.com/CharmYue/ReRun.git
+cd rerun-life
 pip install -e .
 rerun
 ```
 
-Or with Python directly:
+### 方式三：uv（更快）
 
 ```bash
-python -m rerun
+git clone https://github.com/CharmYue/ReRun.git
+cd rerun-life
+uv run python -m rerun
 ```
 
-### Options
+### 可选：AI 增强模式
 
-```
-python -m rerun --offline    # No API key needed
-python -m rerun --lang en    # English mode
-python -m rerun --debug      # Debug output
-```
-
-### AI Mode (Optional)
-
-Create a `.env` file for AI-generated events:
+接入 GPT-4o 获得个性化旁白和结局评价（不接也能玩，有离线模式）：
 
 ```bash
-cp .env.example .env
-# Edit .env and add your OPENAI_API_KEY
+export OPENAI_API_KEY=你的key
+rerun
 ```
 
-Without an API key, the game runs in offline mode with a curated event pool — fully playable and fun.
+## 🎯 三种命运，你选哪条？
 
-## How It Works
+| 起点 | 描述 | 难度 | 体验 |
+|------|------|------|------|
+| ¥30,000 | 刚毕业，穷但有时间 | ⭐⭐⭐ | 从零开始逆天改命 |
+| ¥80,000 | 工作几年，有点积蓄 | ⭐⭐ | 攻守兼备 |
+| ¥200,000 | 小有成就，有房贷有对象 | ⭐ | 中产重生，不同烦恼 |
 
-Each year (2015-2025), you'll see:
-1. **Year briefing** — real historical context + your current stats
-2. **Events** — life situations with 2-3 choices (career, family, romance, investment)
-3. **Consequences** — stat changes, narrator commentary, maybe an achievement
+## 🏆 成就一览
 
-Your stats include savings, BTC holdings, properties, stocks, stress, relationships, social standing, and reputation. Every choice shifts the balance.
+| 成就 | 描述 |
+|------|------|
+| 💎 钻石手 | BTC 暴跌 50% 以上没有卖出 |
+| 🐟 抄底王 | 在最恐慌的时候买入 |
+| 📈 十倍先生 | 资产翻了 10 倍以上 |
+| 😷 先知 | 在大事件发生前做出正确行动 |
+| 🤡 小丑 | 知道未来还亏钱了 |
+| 🧘 佛系 | 压力值全程没超过 50 |
+| 😭 意难平 | 最终资产不如不穿越的基准线 |
+| 🏠 地主 | 拥有房产 |
+| 💀 破产重生 | 资产归零后又东山再起 |
 
-At the end, you get a settlement report comparing your 10-year performance against a "normal life" baseline.
+> 还有更多隐藏成就等你发现...
 
-## Achievements
+## 🔮 你没有体验到的平行人生
 
-| Category | Examples |
-|----------|---------|
-| Investment | Diamond Hands, The Clown, Landlord, Tenbagger |
-| Life | Life Winner, Heartbreaker, Zen Master, Lone Wolf |
-| Hidden | Prophet, Storyteller, Phoenix, Exposed |
+游戏结尾会告诉你：如果你做了不同的选择，会发生什么。
 
-## Tech Stack
+> *如果你 2016 年买了房——2024 年你会有一套值 150 万的房子，和一个催你结婚的丈母娘*
+> 
+> *如果你 2017 年跟老王坦白买了 BTC——2018 年会有 3 个朋友因为跟着你买亏钱来找你算账*
+> 
+> *如果你没有囤口罩——2020 年你会在药店门口排 3 个小时的队*
 
-- Python 3.12+
-- [Rich](https://github.com/Textualize/rich) for terminal UI
-- [Pydantic](https://docs.pydantic.dev/) for data models
-- OpenAI GPT-4o-mini for AI events (optional)
+## 🛠️ 技术栈
 
-## Development
+- Python 3.11+
+- [Rich](https://github.com/Textualize/rich) — 终端 UI
+- [OpenAI API](https://platform.openai.com/)（可选）— AI 生成个性化内容
+- 纯离线也能玩，无需任何 API Key
+
+## 📋 项目结构
+
+```
+rerun-life/
+├── rerun/
+│   ├── engine/        # 游戏引擎（状态管理、事件系统）
+│   ├── data/          # 历史数据（BTC价格、事件池）
+│   ├── ui/            # 终端渲染
+│   └── __main__.py    # 入口
+├── tests/             # 自动化状态一致性测试
+├── examples/          # 示例游戏记录
+└── README.md
+```
+
+## 🗺️ Roadmap
+
+- [x] CLI 版本（当前）
+- [ ] Web 版本 — 手机浏览器打开就能玩（rerun.life）
+- [ ] 感情线 / 事业线 / 安家线 — 更多人生主线
+- [ ] "带着你的遗憾来" — 用户自定义起点
+- [ ] 多语言支持（English version）
+- [ ] 排行榜 — 看看谁的十年最传奇
+
+## 🤝 贡献
+
+欢迎贡献新的事件、成就、平行人生彩蛋！
 
 ```bash
-pip install -e ".[dev]"
-pytest                    # Run tests
-ruff check rerun/ tests/  # Lint
-ruff format rerun/ tests/ # Format
+# 跑一遍状态一致性测试
+python -m pytest tests/test_consistency.py
 ```
 
-## Disclaimer
+详见 [CONTRIBUTING.md](CONTRIBUTING.md)
 
-The investment options in this game do not constitute real investment advice. BTC prices are based on historical data. Past performance does not predict future results.
+## 📝 灵感来源
 
-## License
+- [Slay the Spire](https://store.steampowered.com/app/646570/) — Roguelike 机制
+- [赛博徒步：生死鳌太线](https://cyberhiking.cn/) — 文字生存模拟的标杆
+- 网文穿越重生流 — 核心设定灵感
+- 那些你拍断大腿的瞬间 — 2015 年 BTC ¥1,800 你买了吗？
 
-[MIT](LICENSE)
+## ⚠️ 免责声明
+
+本游戏中的投资选项不构成任何真实投资建议。BTC 价格基于历史数据。请勿依据游戏内容做出真实投资决策。
+
+## 📄 License
+
+MIT
+
+---
+
+**如果你玩完觉得有意思，给个 ⭐ Star 吧。这是对独立开发者最好的鼓励。**

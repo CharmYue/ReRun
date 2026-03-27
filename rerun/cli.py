@@ -59,6 +59,11 @@ def run_game(settings: Settings) -> None:
     # Create console — enable recording if --record flag is set
     console = Console(force_terminal=True, record=settings.record)
 
+    if settings.is_offline:
+        console.print(
+            "[dim]提示：未检测到 OPENAI_API_KEY，将使用离线模式。游戏体验不受影响。[/dim]\n"
+        )
+
     renderer = GameRenderer(console, settings.typewriter_speed)
     engine = GameEngine(settings)
     lang = settings.game_language.value
